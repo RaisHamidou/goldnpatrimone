@@ -1,0 +1,23 @@
+@import "../styles/settings";
+//Elements
+@import "../../../components/Elements/Cards/CategoryCards/CategoryCards.scss";
+@import "../../../components/Elements/Cards/productCards/productCards.scss";
+@import "../../../components/Elements/Buttons/CTA/CTA.scss";
+@import "../../../components/Elements/Cards/previewCards/PreviewCards.scss";
+
+//Layout
+@import "../../../components/Layout/Header/Header.scss";
+@import "../../../components/Layout/Hero/Hero.scss";
+@import "../../../components/Layout/Category/Category.scss";
+@import "../../../components//Layout/Stats/Stats.scss";
+@import "../../../components/Layout/Offer/Offer.scss";
+@import "../../../components/Layout/Partner/Partner.scss";
+@import "../../../components/Layout/Footer/Footer.scss";
+@import "../../../components/Layout/Preview/Preview.scss";
+
+//pages
+@import "../../../components/Layout/Habiter/Habiter.scss";
+@import "../../../components/Layout/Investire/Investire.scss";
+@import "../../../components/Layout/Contact/Contact.scss";
+@import "../../../components/Layout/OfferPage/OfferPage.scss";
+

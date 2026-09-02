@@ -1,0 +1,247 @@
+.section-invest{
+background-color: #F8F6F2;
+}
+.investire{
+
+display: flex;
+align-items: center;
+justify-content: flex-end;
+position: relative;
+width: 100%;
+max-width: 2100px;
+height: 700px;
+margin: auto;
+padding: 50px;
+
+
+
+   @media screen and (max-width:800px) {
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  height: 650px;
+    }
+    @media screen and (max-width:600px) {
+  
+  height: 600px;
+    }
+    @media screen and (max-width:475px) {
+        height: 550px;
+        padding: 30px;
+    }
+     @media screen and (max-width:425px) {
+        height: 500px;
+     
+    }
+    @media screen and (max-width:375px) {
+   padding: 10px;
+ height: 450px;
+
+
+    }
+    @media screen and (min-width:2100px) {
+    padding: 100px 100px 100px 0px;
+    height: auto ;
+}
+.container-info-investir{
+    background-color: #F8F6F2;
+    border: solid 1px $gold;
+    border-radius: 7px;
+    display: inline-block;
+    width: 650px;
+    padding: 30px 20px 30px 50px;
+    position: absolute;
+    left: 70px;
+    @media screen and (min-width:1600px) {
+    
+    left: 100px;
+    width: 700px;
+    
+}
+    @media screen and (max-width:1078px) {
+        width: 40%;
+        
+    }
+    @media screen and (max-width:1005px) {
+  left: 50px;
+    }
+    @media screen and (max-width:800px) {
+        position: absolute;
+        width: 60%;
+        bottom: 50px;
+  left: inherit;
+    }
+    @media screen and (max-width:768px) {
+  width: 70%;
+  
+    }
+     @media screen and (max-width:475px) {
+    padding: 20px 10px 20px 40px;
+    bottom: 40px;
+    width: 75%;
+
+    }
+     @media screen and (max-width:375px) {
+   
+    bottom: 30px;
+
+
+    }
+    @media screen and (min-width:2100px) {
+        width: 45%;
+        padding: 60px 20px 60px 60px;
+    }
+
+
+  .subtitle-info-investire{
+    color: $gold;
+    font-family: $manrope;
+    letter-spacing: 1px;
+    font-weight: bold;
+    font-size: 0.75rem;
+    margin-bottom: 10px;
+
+    @media screen and (min-width:2100px) {
+        font-size: 1rem;
+    }
+
+    @media screen and (max-width:1078px){
+        font-size: .7rem;
+    }
+           @media screen and (max-width:425px) {
+ font-size: .6rem;
+}
+@media screen and (max-width:375px) {
+   
+  font-size: .5rem;
+
+
+    }
+  }
+  
+
+    .title-info-investire{
+           color: $coffee;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 20px;
+        font-family: $manrope;
+        letter-spacing: 1px;
+     
+         @media screen and (min-width:1789px) {
+    
+    
+font-size: 1.7rem;
+    
+}
+        @media screen and (max-width:1078px) {
+   font-size: 1rem;
+    }
+    @media screen and (max-width:928px){
+        font-size: .8rem;
+    }
+    @media screen and (max-width:768px) {
+ br{
+    display: none;
+ }
+ 
+  
+    }
+        @media screen and (max-width:425px) {
+ font-size: .7rem;
+ margin-bottom: 10px;
+}
+@media screen and (max-width:375px) {
+   
+  font-size: .6rem;
+
+
+    }
+       @media screen and (min-width:2100px) {
+        font-size: 2rem;
+    }
+    }
+    .text-info-investire{
+        color:#A3825C;
+      font-size: 1.3rem;
+      line-height: 1.6;
+      margin-bottom: 35px;
+      font-family: $manrope;
+      width: 80%;
+      font-weight: 400;
+      
+              @media screen and (min-width:1789px) {
+    
+font-size: 1.7rem;
+width: 90%;
+    
+}
+         @media screen and (max-width:1078px) {
+   font-size: 0.9rem;
+   margin-bottom: 20px;
+    }
+     @media screen and (max-width:928px){
+        font-size: .8rem;
+        width: 90%;
+    }
+    @media screen and (max-width:375px) {
+   
+  font-size: .7rem;
+
+
+    }
+       @media screen and (min-width:2100px) {
+        font-size: 2rem;
+    }
+      
+    }
+
+    .btn-outline{
+        color: $coffee;
+        border: 2px solid $gold;
+        @media screen and (min-width:2100px) {
+        font-size: 2rem;
+        border: solid 3px $gold;
+    }
+        @media screen and (max-width:1078px){
+            font-size: 0.8rem;
+            padding: 10px 20px;
+        }
+        @media screen and (max-width:928px){
+            font-size: 0.7rem;
+            padding: 7px 15px;
+        }
+    }
+ 
+    
+}
+.info-investire-img{
+        display: block;
+    width: 60%;
+    //height: 200px;
+   
+    //height: 30%;
+   aspect-ratio: 16/9;
+    @media screen and (max-width:1005px) {
+  width: 80%;
+    }
+     @media screen and (max-width:928px) {
+  width: 80%;
+    }
+    @media screen and (max-width:768px) {
+  width: 95%;
+  
+    }
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      display: block;
+      object-fit: cover;
+    }
+        
+    }
+}

@@ -1,0 +1,36 @@
+.btn-filled, .btn-outline {
+    background-color: $gold; 
+    font-size: 1.2rem;
+    color: white;
+    display: inline-block; 
+    padding: 10px 30px; 
+    text-decoration: none; 
+    cursor: pointer;
+    border: none;
+    font-family: $manrope;
+    border-radius: 5px;
+     border: 1px solid darken($gold, 10);
+    &:hover{
+        background-color: darken($gold, 10);
+    }
+
+    @media screen and (max-width:800px) {
+        padding: 10px 25px; 
+        font-size: 1rem;
+    }
+    @media screen and (max-width:650px) {
+        padding: 10px 20px; 
+        font-size: 0.8rem;
+    }
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid $gold;
+    color: $gold;
+
+    &:hover{
+        background-color: transparent;
+        border: 1px solid darken($gold, 10);
+    }
+}

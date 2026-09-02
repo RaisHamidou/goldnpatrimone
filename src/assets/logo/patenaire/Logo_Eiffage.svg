@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="137.90828"
+   height="26.038185"
+   viewBox="0 0 137.90828 26.038185"
+   version="1.1"
+   id="svg30"
+   sodipodi:docname="eiffage.svg"
+   style="shape-rendering:geometricPrecision"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata34">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>functions/LOGO</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     id="namedview32"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="3.679165"
+     inkscape:cx="54.85008"
+     inkscape:cy="22.543915"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg30" />
+  <!-- Generator: Sketch 45.2 (43514) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title2">functions/LOGO</title>
+  <desc
+     id="desc4">Created with Sketch.</desc>
+  <defs
+     id="defs7">
+    <polygon
+       id="path-1"
+       points="13.49169,18.938176 13.49169,0.32081477 0.12567093,0.32081477 0.12567093,18.938176 " />
+    <polygon
+       points="13.49169,18.938176 13.49169,0.32081477 0.12567093,0.32081477 0.12567093,18.938176 "
+       id="path-1-5" />
+  </defs>
+  <g
+     id="g1032"
+     transform="translate(0,-5.0522012e-5)">
+    <g
+       id="g1017">
+      <polygon
+         id="Fill-1"
+         points="0,25.778149 18.487423,25.778149 18.487423,21.481757 0,21.481757 "
+         style="fill:#ff0000;fill-rule:evenodd;stroke:none;stroke-width:1" />
+      <polygon
+         id="Fill-2"
+         points="0,18.617664 18.487423,18.617664 18.487423,14.321273 0,14.321273 "
+         style="fill:#ff0000;fill-rule:evenodd;stroke:none;stroke-width:1" />
+      <polygon
+         id="Fill-3"
+         points="0,11.45718 18.487423,11.45718 18.487423,7.1607879 0,7.1607879 "
+         style="fill:#ff0000;fill-rule:evenodd;stroke:none;stroke-width:1" />
+      <polygon
+         id="Fill-4"
+         points="25.59799,19.047354 25.59799,5.0522012e-05 6.6846401,5.0522012e-05 2.4183502,4.2964424 21.3317,4.2964424 21.3317,23.343241 "
+         style="fill:#ff0000;fill-rule:evenodd;stroke:none;stroke-width:1" />
+    </g>
+    <g
+       id="g1011">
+      <path
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         inkscape:connector-curvature="0"
+         id="Fill-5"
+         d="m 117.33983,8.9183475 c 1.66558,0 3.41193,0.6254625 4.55626,1.4954515 l 0.59298,-2.2330729 c -1.74986,-0.8619055 -3.42447,-1.2797225 -5.41563,-1.2797225 -7.5829,0 -11.44685,5.4174754 -11.44685,11.0284504 0,5.335629 3.31461,8.108782 8.76185,8.108782 2.39001,0 4.36613,-0.363253 6.64074,-1.295889 l 1.01189,-7.214038 h -4.82466 l -0.86941,6.199556 c -0.47609,0.141461 -0.94416,0.202088 -1.51256,0.202088 -3.80074,0 -4.33001,-3.741155 -4.33001,-6.050516 0,-4.34843 2.41258,-8.9610895 6.8354,-8.9610895" />
+      <polygon
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         points="22.653879,0.32101686 17.829219,0.32101686 15.218474,18.938378 20.042632,18.938378 "
+         id="Fill-7"
+         transform="translate(34.615945,6.839973)" />
+      <polygon
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         points="12.032904,8.382309 6.5304737,8.382309 7.3798185,2.3262355 13.310182,2.3262355 13.591625,0.32101686 2.8366011,0.32101686 0.22535482,18.938378 10.980379,18.938378 11.261821,16.933159 5.3314576,16.933159 6.2791318,10.172809 11.782064,10.172809 "
+         id="Fill-9"
+         transform="translate(34.615945,6.839973)" />
+      <polygon
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         points="38.429719,0.32101686 27.674696,0.32101686 25.063951,18.938378 29.88811,18.938378 31.117728,10.172809 36.62066,10.172809 36.8715,8.382309 31.368568,8.382309 32.218415,2.3262355 38.148277,2.3262355 "
+         id="Fill-14"
+         transform="translate(34.615945,6.839973)" />
+      <polygon
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         points="45.814454,10.172759 51.317386,10.172759 51.568227,8.3822585 46.065295,8.3822585 46.915141,2.326185 52.845505,2.326185 53.126446,0.32096634 42.371422,0.32096634 39.761179,18.938328 44.585338,18.938328 "
+         id="Fill-16"
+         transform="translate(34.615945,6.839973)" />
+      <path
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         inkscape:connector-curvature="0"
+         id="Fill-18"
+         d="m 92.45347,18.044593 3.267445,-5.802453 1.222595,5.802453 z M 95.929614,7.1530579 85.472588,25.778503 h 2.625795 l 3.34671,-5.94341 h 5.87568 l 1.253198,5.94341 h 4.553749 L 99.256256,7.1530579 Z" />
+      <polygon
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1"
+         points="0.22535482,18.938378 10.980379,18.938378 11.261821,16.933159 5.3314576,16.933159 6.2791318,10.172809 11.782064,10.172809 12.032904,8.382309 6.5304737,8.382309 7.3798185,2.3262355 13.310182,2.3262355 13.591625,0.32101686 2.8366011,0.32101686 "
+         id="Fill-9-7"
+         transform="translate(124.31665,6.839622)" />
+    </g>
+  </g>
+</svg>

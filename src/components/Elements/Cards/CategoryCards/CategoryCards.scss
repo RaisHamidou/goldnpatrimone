@@ -1,0 +1,99 @@
+.Category-cards{
+    background-color: #F8F6F2;
+    border: 1px solid #ECD9B8;
+    width: 40%;
+    height: 290px;
+    border-radius:7px ;
+   //-webkit-box-shadow: 5px 5px 4px -3px #D5AB61; 
+//box-shadow: 5px 5px 4px -3px #D5AB61;
+padding: 30px;
+position: relative;
+
+@media screen and (max-width:1025px) {
+    width: 49%;
+   
+}
+
+@media screen and (max-width:850px) {
+    height: 230px;
+}
+ @media screen and (max-width:680px) {
+    width: 49.5%;
+     height: 200px;
+}
+@media screen and (max-width:575px) {
+    width: 90%;
+    height: 180px;
+}
+@media screen and (max-width:375px) {
+    
+    height: 190px;
+}
+
+
+h2{
+color:#4A2A15;
+letter-spacing: 1px;
+font-family: $manrope;
+font-size: 1.7rem;
+display: flex;
+align-items: center;
+font-weight: 600;
+position: relative;
+@media screen and (max-width:850px) {
+    font-size: 1.4rem;
+}
+}
+.title-category{
+display: flex;
+gap: 20px;
+}
+.icon-category{
+    width: 30px;
+    @media screen and (max-width:850px) {
+    font-size: 1.5rem;
+}
+    img{
+        width: 100%;
+    }
+}
+p{
+    font-size: 1.3rem;
+    font-family: $manrope;
+    font-weight: 500;
+    letter-spacing: 1px;
+    color:#A3825C;
+    margin: 20px 0px 20px;
+    @media screen and (max-width:850px) {
+    font-size: 1rem;
+}
+   @media screen and (max-width:680px) {
+    font-size: 0.9rem;
+    margin: 10px 0px 10px;
+}
+@media screen and (max-width:375px) {
+   font-size: 0.8rem;
+}
+}
+
+.btn-outline{
+    border: #4A2A15 solid 2px;
+    padding: 7px 20px;
+    font-size: 1rem;
+    color: #4A2A15;
+    position: absolute;
+    bottom: 30px;
+
+    @media screen and (max-width:850px) {
+    padding: 5px 15px;
+     bottom: 30px;
+}
+@media screen and (max-width:680px) {
+     font-size: 0.8rem;
+     bottom: 20px;
+}
+@media screen and (max-width:375px) {
+   font-size: 0.7rem;
+}
+}
+}

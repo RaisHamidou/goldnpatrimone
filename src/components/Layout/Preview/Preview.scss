@@ -1,0 +1,250 @@
+.review {
+  padding: 48px 0 56px;
+  background: #f8f8f6;
+  overflow: hidden;
+ 
+
+  &__container {
+    width: 100%;
+    margin: 0 auto;
+
+   
+  }
+
+  &__title {
+    margin: 0 0 34px;
+    text-align: center;
+    font-size: clamp(22px, 2vw, 30px);
+    font-weight: 600;
+    //line-height: 1.2;
+    letter-spacing: 1px;
+    color: #ab8860;
+    font-family: $manrope;
+  }
+
+  &__marquee {
+    overflow: visible !important;
+  
+
+    .rfm-marquee {
+      gap: 0;
+    }
+  }
+}
+
+.review-card {
+  width: 350px;
+  min-height: 150px;
+  margin-right: 10px;
+  padding: 20px 0px 20px 30px;
+  border: 1px solid #cfb172;
+  border-radius: 10px;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-shrink: 0;
+    
+
+    @media screen and (max-width:480px) {
+        width: 250px;
+        min-height: 110px;
+        padding: 15px 0px 15px 20px;
+    }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+
+     @media screen and (max-width:480px) {
+         margin-bottom: 10px;
+    }
+  }
+
+  &__avatar {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border-radius: 50%;
+    background: #ead8b5;
+    color: #c59f59;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    margin-top: 1px;
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    h3 {
+      margin: 0 0 5px;
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: #171717;
+    }
+  }
+
+  &__stars {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    line-height: 1;
+    color: #caa55f;
+  }
+
+  &__text {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.16;
+    font-weight: 400;
+    color: #2a2a2a;
+    font-family: $manrope;
+    width: 90%;
+
+    @media screen and (max-width:1024px) {
+        font-size: .8rem;
+    }
+    @media screen and (max-width:768px) {
+        font-size: .8rem;
+    }
+    @media screen and (max-width:480px) {
+        font-size: .7rem;
+    }
+  }
+}
+
+/* @media (max-width: 1024px) {
+  .review {
+    padding: 40px 0 48px;
+
+    &__title {
+      margin-bottom: 28px;
+      font-size: 24px;
+    }
+  }
+
+  .review-card {
+    width: 336px;
+    min-height: 184px;
+    margin-right: 20px;
+    padding: 22px 24px 18px;
+
+    &__avatar {
+      width: 40px;
+      height: 40px;
+      flex-basis: 40px;
+      font-size: 11px;
+    }
+
+    &__meta h3 {
+      font-size: 14px;
+    }
+
+    &__stars {
+      font-size: 10px;
+    }
+
+    &__text {
+      font-size: 11.5px;
+      max-width: 31ch;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .review {
+    padding: 34px 0 40px;
+
+    &__title {
+      margin-bottom: 22px;
+      padding: 0 16px;
+      font-size: 20px;
+      letter-spacing: 0.12em;
+    }
+  }
+
+  .review-card {
+    width: 290px;
+    min-height: 168px;
+    margin-right: 16px;
+    padding: 18px 18px 16px;
+    border-radius: 14px;
+
+    &__top {
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    &__avatar {
+      width: 36px;
+      height: 36px;
+      flex-basis: 36px;
+      font-size: 10px;
+    }
+
+    &__meta h3 {
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    &__stars {
+      font-size: 9px;
+    }
+
+    &__text {
+      font-size: 10.8px;
+      line-height: 1.18;
+      max-width: 30ch;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .review {
+    padding: 28px 0 34px;
+
+    &__title {
+      font-size: 17px;
+      margin-bottom: 18px;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  .review-card {
+    width: 252px;
+    min-height: 154px;
+    padding: 16px 16px 14px;
+
+    &__avatar {
+      width: 34px;
+      height: 34px;
+      flex-basis: 34px;
+      font-size: 9px;
+    }
+
+    &__meta h3 {
+      font-size: 12px;
+    }
+
+    &__stars {
+      font-size: 8px;
+    }
+
+    &__text {
+      font-size: 10px;
+      max-width: 28ch;
+    }
+  }
+} */

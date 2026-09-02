@@ -1,0 +1,40 @@
+.partner {
+  width: 100%;
+  background-color: $coffee;
+  padding: 50px 0;
+  overflow: hidden;
+  position: relative;
+
+  h1{
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #775A32;
+  font-weight: 400;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  font-family: $manrope;
+}
+}
+
+.partner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 40px;
+  flex: 0 0 auto;
+}
+
+.partner-icon svg {
+  display: block;
+  height: auto;
+  width: 100px;
+  max-width: none;
+}
+
+.nextis {
+   
+  width: 50px !important;
+  
+}

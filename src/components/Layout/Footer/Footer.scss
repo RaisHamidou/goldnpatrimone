@@ -1,0 +1,187 @@
+.footer {
+
+  background-color: #F8F6F2;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  border-top: 1px solid #d4ac6274;
+
+
+  width: 100%;
+
+  @media screen and (max-width:800px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+
+.footer-logo {
+    width: 70px;
+
+    //transform: translateY(-15px);
+    img{
+      width: 100%;
+      object-fit: cover;
+    }
+    @media screen and (max-width:800px) {
+      margin: 30px 0px;
+        transform: inherit;
+    }
+  }
+  .footer-container{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 90px;
+   height: auto;
+   // background-color: red;
+      @media screen and (max-width:850px) {
+    gap:60px;
+    width:90%;
+  }
+  @media screen and (max-width:800px) {
+    flex-direction: column;
+   
+    //padding: 30px 0px;
+    gap: 30px;
+
+  }
+  @media screen and (max-width:375px) {
+            gap: 20px;
+        }
+  }
+
+  
+  h3 {
+    font-family: $inter;
+    font-weight: 300;
+    margin: 20px 0px;
+    color: $coffee;
+    font-size: 1.1rem;
+    font-style: italic;
+@media screen and (max-width:800px) {
+    margin: 0px 0px 10px 0px;
+    text-align: center;
+}
+     
+  }
+  .container-get-in-touch {
+    width: 25%;
+    @media screen and (max-width: 1024px) {
+      width: 20%;
+    }
+    @media screen and (max-width:800px){
+        width: auto;
+    }
+    .get-in-touch {
+      height: 100px;
+      margin-bottom: 20px;
+        @media screen and (max-width:800px){
+            height: auto;
+            width: 190px;
+            
+        }
+      p {
+        font-size: 0.9rem;
+        font-family: $inter;
+        font-weight: 400;
+        color: $coffee;
+        margin-bottom: 10px;
+
+        @media screen and (max-width: 1024px) {
+          font-size: 0.7rem;
+        }
+        @media screen and (max-width:800px) {
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        @media screen and (max-width:375px) {
+            font-size: 0.7rem;
+            text-align: center;
+        }
+      }
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 15px;
+      
+@media screen and (max-width:800px) {
+            
+            align-items: center;
+      justify-content: center;
+        }
+      .icon {
+        font-size: 0.9rem;
+        margin-top: 5px;
+        color: $gold;
+        cursor: pointer;
+        a{
+          color: $gold;
+        }
+        &:hover{
+          a{
+             color: lighten($gold, 10);
+          }
+       
+      }
+        @media screen and (max-width: 1024px) {
+          font-size: 0.8rem;
+        }
+        @media screen and (max-width:800px) {
+            font-size: 0.8rem;
+            align-items: center;
+      justify-content: center;
+        }
+      }
+    }
+  }
+  ul {
+    //background-color: rgba(255, 0, 0, 0.216);
+    height: 100px;
+    margin-bottom: 20px;
+@media screen and (max-width:800px){
+            height: auto;
+            width: 190px;
+            
+        }
+    li {
+      list-style: none;
+      margin-bottom: 8px;
+      
+
+      @media screen and (max-width: 1024px) {
+        margin-bottom: 5px;
+      }
+      @media screen and (max-width: 800px) {
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      @media screen and (max-width:375px) {
+            margin-bottom: 5px;
+        }
+    }
+
+    a {
+      font-family: $inter;
+      color: $coffee;
+      font-weight: 400;
+      font-size: 0.9rem;
+      cursor: pointer;
+      &:hover{
+        color: lighten(black, 20);
+      }
+      @media screen and (max-width: 1024px) {
+        font-size: 0.7rem;
+      }
+      @media screen and (max-width:800px) {
+            font-size: 0.8rem;  
+        }
+        @media screen and (max-width:375px) {
+            font-size: 0.7rem;
+            
+        }
+    }
+  }
+}
