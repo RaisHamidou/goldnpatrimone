@@ -156,7 +156,8 @@ $color-border: #e8dfcd;
       justify-content: space-between;
       gap: 20px;
       flex-wrap: wrap;
-
+      margin-top: 50px;
+       margin-bottom: 50px;
       @media (max-width: 768px) {
         flex-direction: column;
         align-items: center;
@@ -190,5 +191,29 @@ $color-border: #e8dfcd;
         min-height: 100px;
       }
     }
+  }
+}
+
+.cta-habiter{
+  width: 100%;
+  margin: 30px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .btn-outline{
+     &:hover {
+          background-color: $gold;
+          color: white;
+        
+    }
+  }
+
+}
+
+.img-avantage{
+  width: 60%;
+  img{
+    width: 100%Ò;
   }
 }

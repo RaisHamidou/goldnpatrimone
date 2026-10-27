@@ -4,7 +4,7 @@ import React from 'react'
 export default function Investire() {
   return (
     <section className='section-invest'>
-    <div className='investire'>
+    <div className='investir'>
         <div className="container-info-investir">
             <div className="subtitle-info-investire">VOTRE FUTUR LOGEMENT</div>
             <div className="title-info-investire"><h1>Habitez un logement <br/> pensé pour demain</h1></div>

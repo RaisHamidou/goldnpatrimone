@@ -1,7 +1,7 @@
 import React from 'react'
 import CTA from '../../Buttons/CTA/CTA'
 import home from "../../../../assets/svg/home.svg"
-export default function CategoryCards({title, children, btn, img}) {
+export default function CategoryCards({title, children, btn, img, btnTwo}) {
   return (
     <div className='Category-cards'>
       <div className="title-category">
@@ -15,6 +15,7 @@ export default function CategoryCards({title, children, btn, img}) {
       <CTA variant="outline">
       {btn}
       </CTA>
+     
     </div>
   )
 }

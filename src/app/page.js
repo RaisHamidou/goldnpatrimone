@@ -12,21 +12,25 @@ export default function Home() {
   return (
     <div>
       <Hero>
-        <h1>Construisons votre avenir immobilier</h1>
+        <h1>Construisons votre projet de vie ensemble !</h1>
         <p>
-          Découvrez une sélection de logements neufs et de biens soigneusement
-          choisis pour répondre à tous vos projets.
+          Votre projet, notre expertise ! Chez GOLD’N PATRIMOINE 
+          nous proposons des biens soigneusement sélectionnés aux meilleurs prix, avec un accompagnement clé en main.
         </p>
         <div className="container-buttons">
-          <CTA variant="filled">Découvrire</CTA>
+          <CTA variant="filled">Découvrir</CTA>
         </div>
       </Hero>
+       <Partner />
      
-      <Stats />
+      
        <Category />
    {/*    <Offer /> */}
-      <Partner />
+   <Stats />
+     
+     
       <Preview />
+     
       <Footer />
     </div>
   );
