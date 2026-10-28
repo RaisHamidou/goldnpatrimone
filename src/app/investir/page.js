@@ -28,14 +28,14 @@ export default function page() {
   return (
     <div>
       <Hero>
-        <h1>Investire</h1>
+        <h1>Investir</h1>
         <p>
           Découvrez une sélection de logements neufs et de biens soigneusement
           choisis pour répondre à tous vos projets.
         </p>
 
         <div className="container-buttons">
-          <CTA variant="filled">Découvrire</CTA>
+          <CTA variant="filled">Découvrir</CTA>
         </div>
       </Hero>
       <Investire />

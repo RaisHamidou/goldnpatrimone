@@ -181,3 +181,131 @@ header {
     }
   }
 }
+// Sous-menu du Simulateur
+.simulator-menu {
+  position: relative;
+
+  .nav-link-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .submenu-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: $dark_gold;
+    font-family: $manrope;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      color: lighten($dark_gold, 10);
+    }
+
+    svg {
+      font-size: 0.8rem;
+      transition: transform 0.2s ease;
+    }
+  }
+
+  &.submenu-active .submenu-toggle svg {
+    transform: rotate(180deg);
+  }
+
+  .simulator-submenu {
+      display: none;
+  position: absolute;
+  top: 100%; // au lieu de calc(100% + 15px)
+  left: 0;
+  min-width: 230px;
+  padding: 8px;
+  padding-top: 15px; // conserve l'espace visuel sans casser le hover
+  background-color: #29170b;
+  border: 1px solid $light_gold;
+  border-radius: 7px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+  z-index: 101;
+
+    li {
+      width: 100%;
+      list-style: none;
+    }
+
+    a {
+      display: block;
+      padding: 12px 14px;
+      border-radius: 5px;
+      color: $white;
+      font-family: $manrope;
+      font-size: 0.95rem;
+      white-space: nowrap;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+        color: $gold;
+      }
+    }
+
+    li::after {
+      display: none;
+    }
+
+    li.active::after {
+      display: none;
+    }
+  }
+
+  &:hover .simulator-submenu,
+  &:focus-within .simulator-submenu,
+  &.submenu-active .simulator-submenu {
+    display: flex;
+  }
+
+  @media screen and (max-width: 800px) {
+    width: 100%;
+
+    .nav-link-row {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .submenu-toggle {
+      font-size: 1.5rem;
+      color: $white;
+    }
+
+    .simulator-submenu {
+      position: static;
+      width: 100%;
+      min-width: 0;
+      margin-top: 15px;
+      padding: 5px 0 5px 15px;
+      background: transparent;
+      border: none;
+      border-left: 2px solid $gold;
+      border-radius: 0;
+      box-shadow: none;
+
+      a {
+        font-size: 1.05rem;
+        white-space: normal;
+        padding: 10px 12px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    .submenu-toggle {
+      font-size: 1.2rem;
+    }
+  }
+}

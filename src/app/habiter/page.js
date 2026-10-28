@@ -31,7 +31,7 @@ export default function page() {
             
           <div className="container-buttons">
             <CTA variant="filled"> 
-            Découvrire
+            Découvrir
             </CTA>
             
           </div>

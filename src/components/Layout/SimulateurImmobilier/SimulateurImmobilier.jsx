@@ -76,6 +76,7 @@ function loanFromPayment(monthly, annualRate, years, insuranceRate) {
 }
 
 function Field({ label, name, value, onChange, type = "number", options, hint, ...props }) {
+
   return (
     <div className="sim-field">
       <label htmlFor={`sim-${name}`}>{label}</label>
@@ -135,7 +136,7 @@ function SectionHead({ title, description, tag }) {
   );
 }
 
-export default function SimulateurImmobilier() {
+export default function  SimulateurImmobilier() {
   const [values, setValues] = useState({ ...INITIAL });
   const [activeTab, setActiveTab] = useState("capacity");
   const [contactError, setContactError] = useState("");
@@ -232,6 +233,20 @@ export default function SimulateurImmobilier() {
   }, [values]);
 
   const { capacity, ptz, budget, summary } = calculations;
+  const handlePrint = () => {
+  const fields = document.querySelectorAll(
+    ".sim-contact-grid input, .sim-contact-grid select"
+  );
+
+  for (const field of fields) {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      return;
+    }
+  }
+
+  window.print();
+};
 
   const reset = () => {
     setValues({ ...INITIAL });
@@ -240,10 +255,10 @@ export default function SimulateurImmobilier() {
 
   const prepareEmail = () => {
     setContactError("");
-    if (values.contactConsent !== "yes") {
+    /* if (values.contactConsent !== "yes") {
       setContactError("Pour préparer une demande de contact, sélectionnez d’abord l’option indiquant que vous souhaitez être recontacté.");
       return;
-    }
+    } */
     const name = values.clientName.trim();
     const email = values.clientEmail.trim();
     if (!name || !email || !email.includes("@")) {
@@ -432,7 +447,13 @@ export default function SimulateurImmobilier() {
               </div>
               <div className="sim-actions">
                 <button className="sim-btn" type="button" onClick={prepareEmail}>Préparer ma demande par e-mail</button>
-                <button className="sim-btn sim-btn--secondary" type="button" onClick={() => window.print()}>Imprimer / enregistrer en PDF</button>
+                <button
+  className="sim-btn sim-btn--secondary"
+  type="button"
+ onClick={handlePrint}
+>
+  Imprimer / enregistrer en PDF
+</button>
               </div>
               {contactError && <p className="sim-error" role="alert">{contactError}</p>}
               <p className="sim-note">Le bouton e-mail ouvre votre logiciel de messagerie avec un récapitulatif. Pour collecter automatiquement les coordonnées, il faudra connecter ce formulaire à votre outil de contact/CRM et ajouter une notice de confidentialité adaptée.</p>

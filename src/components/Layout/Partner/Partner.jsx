@@ -7,7 +7,7 @@ export default function Partner() {
 
   return (
     <section className="partner">
-    <h1>Nos Partenaire</h1>
+    <h1>Nos Partenaires</h1>
       <Marquee
         direction="left"
         speed={35}
