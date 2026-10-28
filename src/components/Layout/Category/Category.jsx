@@ -10,10 +10,10 @@ export default function Category() {
       <h3 className="stats-subtitle">Achetez votre futur logement, réalisez un investissement ou développez votre patrimoine grâce à des opportunités immobilières soigneusement sélectionnées.</h3>
 
     <div className="container-category-card">
-    <CategoryCards title={"RESIDENCE PRINCIPALE"} btn={"En savoir plus"}  img={home}>
+    <CategoryCards title={"Residence principale"} btn={"En savoir plus"}  img={home}>
         Découvrez nos logements alliant confort moderne, performance énergétique et prestations de qualité, pensés pour votre quotidien et vos envies.
     </CategoryCards>
-     <CategoryCards title={"INVESTISSEMENT LOCATIF "} btn={"En savoir plus"}  img={invest}>
+     <CategoryCards title={"Investissement locatif"} btn={"En savoir plus"}  img={invest}>
       Optimisez votre fiscalité, préparez votre avenir et développez votre patrimoine grâce à des opportunités immobilières sélectionnés dans des emplacements à fort potentiel de valorisation.
     </CategoryCards>
     </div>

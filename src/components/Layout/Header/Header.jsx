@@ -12,7 +12,7 @@ export default function Header() {
     { href: "/", label: "Accueil" },
     { href: "/habiter", label: "Habiter" },
     { href: "/investir", label: "Investir" },
- 
+     { href: "/simulateur", label: "Simulateur"},
     { href: "/a-propos", label: "À propos" },
   ]
 

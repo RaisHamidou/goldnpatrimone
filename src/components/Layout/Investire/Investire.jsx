@@ -1,5 +1,6 @@
 import CTA from '@/components/Elements/Buttons/CTA/CTA'
 import React from 'react'
+import SimulateurImmobilier from '../SimulateurImmobilier/SimulateurImmobilier'
 
 export default function Investire() {
   return (
@@ -17,6 +18,7 @@ export default function Investire() {
            <img src="https://images.unsplash.com/photo-1558036117-15d82a90b9b1?q=80&w=1000&auto=format&fit=crop" alt="" /> 
         </div>
     </div>
+
     </section>
   )
 }
