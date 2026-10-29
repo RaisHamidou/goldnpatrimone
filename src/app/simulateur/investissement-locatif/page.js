@@ -1,4 +1,5 @@
 import ProductCards from '@/components/Elements/Cards/productCards/productCards'
+import EtudePersonnalisee from '@/components/Layout/EtudePersonnalisee/EtudePersonnalisee'
 import Footer from '@/components/Layout/Footer/Footer'
 import Hero from '@/components/Layout/Hero/Hero'
 import Offer from '@/components/Layout/Offer/Offer'
@@ -12,13 +13,12 @@ export default function page() {
        <Hero>
               <header className="sim-header">
           <div className="sim-brand">GOLD'N PATRIMOINE · Simulateur immobilier</div>
-          <h1>Construisons votre avenir immobilier.</h1>
-          <p>Estimez votre capacité d’emprunt, votre budget d’achat et votre éventuel prêt à taux zéro. Une première vision claire pour préparer votre projet dans le neuf.</p>
-        </header>
-      
-              
+          <h1>Construisons votre stratégie d’investissement</h1>
+          <p>En quelques étapes, obtenez une première analyse de votre financement, de vos revenus locatifs et des dispositifs à étudier selon votre projet.</p>
+        </header> 
             </Hero>
-          <SimulateurImmobilier/>
+         <EtudePersonnalisee/>
+         <Footer/>
     </div>
   )
 }

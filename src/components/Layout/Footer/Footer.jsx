@@ -4,10 +4,17 @@ import { FaSnapchatGhost } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
 
 import logo from "../../../assets/logo/logo.png"
+import Testimonials from '../Testimonials/Testimonials';
+import ContactBanner from '../ContactBanner/ContactBanner';
 
 export default function Footer() {
   return (
-    <div className='footer'>
+    <>
+    
+   <ContactBanner/>
+    
+
+ <div className='footer'>
     <div className="footer-logo">
         <a href="/">
           <img src={logo.src} alt="logo" />
@@ -47,5 +54,7 @@ export default function Footer() {
     </div>
      
     </div>
+    </>
+   
   )
 }

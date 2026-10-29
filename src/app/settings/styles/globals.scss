@@ -1,4 +1,6 @@
-@import "../styles/settings";
+ @import "../styles/settings";
+@import "../styles/page.scss";
+
 //Elements
 @import "../../../components/Elements/Cards/CategoryCards/CategoryCards.scss";
 @import "../../../components/Elements/Cards/productCards/productCards.scss";
@@ -14,12 +16,31 @@
 @import "../../../components/Layout/Partner/Partner.scss";
 @import "../../../components/Layout/Footer/Footer.scss";
 @import "../../../components/Layout/Preview/Preview.scss";
-@import "../../../components/Layout/Habiter/avantageNeuf/AvantageNeuf.scss";
 @import "../../../components/Layout/SimulateurImmobilier/SimulateurImmobilier.scss";
+@import "../../../components/Layout/AboutHome/AboutHome.scss";
+@import "../../../components/Layout/ContactBanner/ContactBanner.scss";
+@import "../../../components/Layout/Intro/Intro.scss";
+@import "../../../components/Layout/Why/Why.scss";
+@import "../../../components/Layout/Testimonials/Testimonials.scss";
+//Habiter
+@import "../../../components/Layout/Habiter/Benefits/Benefits.scss";
+@import "../../../components/Layout/Habiter/HousingClosing/HousingClosing.scss";
+@import "../../../components/Layout/Habiter/HousingIntro/HousingIntro.scss";
+@import "../../../components/Layout/Habiter/Simulator/Simulator.scss";
+@import "../../../components/Layout/Habiter/Steps/Steps.scss";
+ 
+//About
+@import "../../../components/Layout/About/AboutIntro/AboutIntro.scss";
+@import "../../../components/Layout/About/AboutQuote/AboutQuote.scss";
+@import "../../../components/Layout/About/AboutStats/AboutStats.scss";
+@import "../../../components/Layout/About/Approach/Approach.scss";
+@import "../../../components/Layout/About/Services/Services.scss"; 
 
 //pages
 @import "../../../components/Layout/Habiter/Habiter.scss";
 @import "../../../components/Layout/Investire/Investire.scss";
-@import "../../../components/Layout/Contact/Contact.scss";
+//@import "../../../components/Layout/Contact/Contact.scss";
 @import "../../../components/Layout/OfferPage/OfferPage.scss";
+@import "../../../components/Layout/About/About.scss";
+
 

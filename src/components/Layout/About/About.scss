@@ -1,0 +1,137 @@
+
+.about-page {
+  --gold: #d5ac61;
+  --gold2: #b78b45;
+  --brown: #482c1b;
+  --text: #4b3527;
+  --muted: #877666;
+  --cream: #f9f6f1;
+  --sand: #f2ebe1;
+  --line: #eadac1;
+  --white: #fffdfa;
+
+  width: 100%;
+  margin: 0;
+  background: var(--cream);
+  color: var(--text);
+  font-family: "DM Sans", Arial, sans-serif;
+  line-height: 1.7;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.2;
+  }
+
+  h1,
+  h2 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-weight: 500;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  > section {
+    width: 100%;
+    padding: 85px 0;
+  }
+
+  .container-about {
+    width: calc(100% - 42px);
+    max-width: 1180px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .eyebrow {
+    margin-bottom: 15px;
+    color: var(--gold2);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .section-heading {
+    max-width: 780px;
+    margin: 0 auto 40px;
+    text-align: center;
+
+    h2 {
+      margin-bottom: 15px;
+      color: var(--brown);
+      font-size: clamp(30px, 3.4vw, 43px);
+    }
+
+    p:not(.eyebrow) {
+      color: var(--muted);
+      font-size: 15px;
+    }
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 13px 22px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: var(--gold);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s, background 0.2s;
+
+    &:hover {
+      transform: translateY(-2px);
+      background: var(--gold2);
+    }
+  }
+
+  .btn-outline {
+    border-color: var(--gold2);
+    background: transparent;
+    color: var(--brown);
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  @media (max-width: 600px) {
+    > section {
+      padding: 57px 0;
+    }
+
+    .container-about {
+      width: calc(100% - 32px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

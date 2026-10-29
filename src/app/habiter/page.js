@@ -30,7 +30,7 @@ export default function page() {
             <p>Découvrez une sélection de logements neufs et de biens soigneusement choisis pour répondre à tous vos projets.</p>
             
           <div className="container-buttons">
-            <CTA variant="filled"> 
+            <CTA href={"#decouvrir"} variant="filled"> 
             Découvrir
             </CTA>
             

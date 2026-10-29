@@ -1,8 +1,7 @@
 import app from "./backend/app.js";
 
-const PORT = 4050;
+const PORT = process.env.PORT || 4050;
 
-
-app.listen(process.env.PORT, ()=>{
-    `http://localhost:${PORT}`
-})
+app.listen(PORT, () => {
+   console.log(`Serveur lancé sur : http://localhost:${PORT}`);
+});

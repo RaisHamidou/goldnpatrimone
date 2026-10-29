@@ -1,8 +1,8 @@
- "use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import "./SimulateurImmobilier.scss";
-import LogoSim from '../../../assets/logo/logo-n.png'
+import LogoSim from "../../../assets/logo/logo-n.png";
 
 const INITIAL = {
   income: 4000, debts: 0, effort: 35, deposit: 15000, term: "25", rate: 3.5, insurance: 0.3,
@@ -76,22 +76,13 @@ function loanFromPayment(monthly, annualRate, years, insuranceRate) {
 }
 
 function Field({ label, name, value, onChange, type = "number", options, hint, ...props }) {
-
   return (
     <div className="sim-field">
       <label htmlFor={`sim-${name}`}>{label}</label>
       {options ? (
-        <select
-          id={`sim-${name}`}
-          name={name}
-          value={value}
-          onChange={onChange}
-          {...props}
-        >
+        <select id={`sim-${name}`} name={name} value={value} onChange={onChange} {...props}>
           {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
+            <option key={option.value} value={option.value}>{option.label}</option>
           ))}
         </select>
       ) : (
@@ -136,14 +127,17 @@ function SectionHead({ title, description, tag }) {
   );
 }
 
-export default function  SimulateurImmobilier() {
+export default function SimulateurImmobilier() {
   const [values, setValues] = useState({ ...INITIAL });
   const [activeTab, setActiveTab] = useState("capacity");
   const [contactError, setContactError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [contactStatus, setContactStatus] = useState({ type: null, text: "" });
 
   const setField = (event) => {
     const { name, value } = event.target;
     setValues((current) => ({ ...current, [name]: value }));
+    if (name === "clientName" || name === "clientEmail") setContactError("");
   };
 
   const calculations = useMemo(() => {
@@ -177,21 +171,33 @@ export default function  SimulateurImmobilier() {
     const incomeCap = zoneData.income[index];
     const resources = Math.max(rfr, cost / 9);
     const quotient = resources / COEFF[index];
-    const tranche = quotient <= zoneData.tr[0] ? 1 : quotient <= zoneData.tr[1] ? 2 : quotient <= zoneData.tr[2] ? 3 : quotient <= zoneData.tr[3] ? 4 : 5;
+    const tranche =
+      quotient <= zoneData.tr[0] ? 1 :
+      quotient <= zoneData.tr[1] ? 2 :
+      quotient <= zoneData.tr[2] ? 3 :
+      quotient <= zoneData.tr[3] ? 4 : 5;
     const shares = type === "house" ? HOUSE_SHARES : APT_SHARES;
     const share = shares[tranche - 1] || 0;
     const eligibleIncome = resources <= incomeCap;
     const eligible = eligibleIncome && firstBuyer !== "no" && firstBuyer !== "exception" && tranche <= 4 && cost > 0;
     let ptzAmount = eligible ? Math.min(cost, operationCap) * share : 0;
     if (otherLoans > 0) ptzAmount = Math.min(ptzAmount, otherLoans);
+
     const reasons = [];
     if (!eligibleIncome) reasons.push("Le RFR dépasse le plafond de ressources affiché pour la zone et la taille du foyer.");
     if (firstBuyer === "no") reasons.push("La condition de primo-accession n’est pas remplie, sauf exception applicable.");
     if (firstBuyer === "exception") reasons.push("L’exception à la condition de primo-accession doit être validée.");
     if (tranche > 4) reasons.push("Le quotient de ressources se situe au-delà de la tranche 4.");
     if (!cost) reasons.push("Saisissez le coût de l’opération.");
+
     const ptz = {
-      eligible, amount: ptzAmount, share, tranche, resources, quotient, operationCap,
+      eligible,
+      amount: ptzAmount,
+      share,
+      tranche,
+      resources,
+      quotient,
+      operationCap,
       deferral: tranche <= 4 ? DEFERRALS[tranche - 1] : "À vérifier",
       note: eligible
         ? `Calcul simplifié fondé sur les plafonds de ressources, le quotient familial, le plafond d’opération et la quotité indicative. Le montant réel et le différé doivent être confirmés par un établissement prêteur. ${otherLoans > 0 ? "Le montant est plafonné par les autres prêts renseignés." : "Renseignez les autres prêts éligibles pour vérifier le plafond légal."}`
@@ -233,65 +239,86 @@ export default function  SimulateurImmobilier() {
   }, [values]);
 
   const { capacity, ptz, budget, summary } = calculations;
-  const handlePrint = () => {
-  const fields = document.querySelectorAll(
-    ".sim-contact-grid input, .sim-contact-grid select"
-  );
 
-  for (const field of fields) {
-    if (!field.checkValidity()) {
-      field.reportValidity();
-      return;
+  const handlePrint = async () => {
+    const fields = document.querySelectorAll(".sim-contact-grid input, .sim-contact-grid select");
+    for (const field of fields) {
+      if (!field.checkValidity()) {
+        field.reportValidity();
+        return;
+      }
     }
-  }
 
-  window.print();
-};
+    // Envoie d'abord la demande par e-mail ; imprime uniquement si l'envoi réussit.
+    const sent = await prepareEmail();
+    if (sent) window.print();
+  };
 
   const reset = () => {
     setValues({ ...INITIAL });
     setContactError("");
+    setContactStatus({ type: null, text: "" });
+    setLoading(false);
   };
 
-  const prepareEmail = () => {
+  const prepareEmail = async () => {
     setContactError("");
-    /* if (values.contactConsent !== "yes") {
-      setContactError("Pour préparer une demande de contact, sélectionnez d’abord l’option indiquant que vous souhaitez être recontacté.");
-      return;
-    } */
+    setContactStatus({ type: null, text: "" });
+
     const name = values.clientName.trim();
     const email = values.clientEmail.trim();
-    if (!name || !email || !email.includes("@")) {
+
+    if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setContactError("Veuillez renseigner votre nom et une adresse e-mail valide.");
-      return;
+      return false;
     }
+    if (loading) return false;
 
-    const body = [
-      "Bonjour GOLD'N PATRIMOINE,",
-      "",
-      "Je souhaite être accompagné(e) dans mon projet immobilier.",
-      "",
-      `Nom : ${name}`,
-      `E-mail : ${email}`,
-      `Téléphone : ${values.clientPhone}`,
-      `Secteur recherché : ${values.city}`,
-      `Projet : ${values.projectType}`,
-      "",
-      "Synthèse indicative :",
-      `Capital bancaire estimé : ${euro(capacity.loan)}`,
-      `PTZ potentiel estimé : ${euro(ptz.amount)}`,
-      `Budget du projet : ${euro(budget.total)}`,
-      `Financement restant : ${euro(budget.need)}`,
-      `Mensualité estimée : ${euro(budget.monthly)}`,
-      "",
-      "Merci de me recontacter.",
-      "",
-      "Cordialement",
-    ].join("\n");
+    setLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4050";
+      const response = await fetch(
+        `${apiUrl.replace(/\/$/, "")}/api/simulateur-immobilier`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            email,
+            tel: values.clientPhone.trim(),
+            city: values.city.trim(),
+            projectType: values.projectType,
+            loan: capacity.loan,
+            ptz: ptz.amount,
+            budget: budget.total,
+            financingNeeded: budget.need,
+            monthlyPayment: budget.monthly,
+          }),
+        }
+      );
 
-    window.location.href =
-      `mailto:?subject=${encodeURIComponent("Demande d’accompagnement immobilier — GOLD’N PATRIMOINE")}` +
-      `&body=${encodeURIComponent(body)}`;
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || data.status !== "Message Sent") {
+        throw new Error(data.message || "Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
+      }
+
+      setContactStatus({
+        type: "success",
+        text: "Votre demande a été envoyée avec succès. Merci pour votre confiance.",
+      });
+      return true;
+    } catch (error) {
+      console.error("Erreur d'envoi de la demande :", error);
+      setContactStatus({
+        type: "error",
+        text: error.message === "Failed to fetch"
+          ? "Impossible de contacter le serveur. Vérifiez que le serveur est démarré et réessayez."
+          : error.message || "L'envoi a échoué. Veuillez réessayer ultérieurement.",
+      });
+      return false;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const tabs = [
@@ -435,50 +462,83 @@ export default function  SimulateurImmobilier() {
                   <Metric label="Budget logement indicatif" value={euro(summary.housingBudget)} />
                   <Metric primary label="Mensualité bancaire estimée" value={`${euro(summary.monthly)}/mois`} />
                 </div>
-                <p className="sim-note">Prix saisi : <strong>{euro(budget.price)}</strong> · Apport : <strong>{euro(budget.deposit)}</strong> · Frais estimés : <strong>{euro(budget.notary + budget.guarantee + budget.other)}</strong>. Résultats indicatifs uniquement ; voir les avertissements ci-dessous.</p>
+                <p className="sim-note">
+                  Prix saisi : <strong>{euro(budget.price)}</strong> · Apport : <strong>{euro(budget.deposit)}</strong> · Frais estimés :{" "}
+                  <strong>{euro(budget.notary + budget.guarantee + budget.other)}</strong>. Résultats indicatifs uniquement ; voir les avertissements ci-dessous.
+                </p>
               </div>
+
               <div className="sim-grid sim-contact-grid">
-                <Field label="Prénom et nom" name="clientName" type="text" value={values.clientName} onChange={setField} autoComplete="name" placeholder="Votre nom" />
-                <Field label="E-mail" name="clientEmail" type="email" value={values.clientEmail} onChange={setField} autoComplete="email" placeholder="vous@exemple.fr" />
-                <Field label="Téléphone" name="clientPhone" type="tel" value={values.clientPhone} onChange={setField} autoComplete="tel" placeholder="06 00 00 00 00" />
-                <Field label="Ville ou secteur recherché" name="city" type="text" value={values.city} onChange={setField} placeholder="Ex. Chessy, Noisiel…" />
-                <Field label="Votre projet" name="projectType" value={values.projectType} onChange={setField} options={[{ value: "Résidence principale", label: "Résidence principale" }, { value: "Investissement locatif", label: "Investissement locatif" }, { value: "Je me renseigne", label: "Je me renseigne" }]} />
-                
+                <Field label="Prénom et nom" name="clientName" type="text" value={values.clientName} onChange={setField} autoComplete="name" placeholder="Votre nom" maxLength={150} />
+                <Field label="E-mail" name="clientEmail" type="email" value={values.clientEmail} onChange={setField} autoComplete="email" placeholder="vous@exemple.fr" maxLength={254} />
+                <Field label="Téléphone" name="clientPhone" type="tel" value={values.clientPhone} onChange={setField} autoComplete="tel" placeholder="06 00 00 00 00" maxLength={40} />
+                <Field label="Ville ou secteur recherché" name="city" type="text" value={values.city} onChange={setField} placeholder="Ex. Chessy, Noisiel…" maxLength={150} />
+                <Field
+                  label="Votre projet"
+                  name="projectType"
+                  value={values.projectType}
+                  onChange={setField}
+                  options={[
+                    { value: "Résidence principale", label: "Résidence principale" },
+                    { value: "Investissement locatif", label: "Investissement locatif" },
+                    { value: "Je me renseigne", label: "Je me renseigne" },
+                  ]}
+                />
               </div>
+
               <div className="sim-actions">
-                <button className="sim-btn" type="button" onClick={prepareEmail}>Préparer ma demande par e-mail</button>
-                <button
-  className="sim-btn sim-btn--secondary"
-  type="button"
- onClick={handlePrint}
->
-  Imprimer / enregistrer en PDF
-</button>
+                <button className="sim-btn" type="button" onClick={prepareEmail} disabled={loading}>
+                  {loading ? "Envoi en cours..." : "Envoyer ma demande"}
+                </button>
+                <button className="sim-btn sim-btn--secondary" type="button" onClick={handlePrint} disabled={loading}>
+                  {loading ? "Envoi en cours..." : "Imprimer / enregistrer en PDF"}
+                </button>
               </div>
+
               {contactError && <p className="sim-error" role="alert">{contactError}</p>}
-              <p className="sim-note">Le bouton e-mail ouvre votre logiciel de messagerie avec un récapitulatif. Pour collecter automatiquement les coordonnées, il faudra connecter ce formulaire à votre outil de contact/CRM et ajouter une notice de confidentialité adaptée.</p>
+
+              {contactStatus.type && (
+                <p
+                  className={contactStatus.type === "success" ? "sim-note" : "sim-error"}
+                  role={contactStatus.type === "error" ? "alert" : "status"}
+                  aria-live="polite"
+                >
+                  {contactStatus.text}
+                </p>
+              )}
+
+              <p className="sim-note">
+                Votre demande et les estimations saisies seront transmises à GOLD’N PATRIMOINE afin de permettre le suivi de votre projet.
+                Les résultats restent indicatifs et ne constituent pas une offre de prêt.
+              </p>
             </section>
           )}
 
           <div className="sim-actions sim-global-actions">
-            <button className="sim-btn sim-btn--secondary" type="button" onClick={reset}>Réinitialiser les valeurs</button>
-            <a className="sim-btn" href="https://goldnpatrimoine.netlify.app/" target="_blank" rel="noopener noreferrer">Découvrir GOLD’N PATRIMOINE</a>
+            <button className="sim-btn sim-btn--secondary" type="button" onClick={reset} disabled={loading}>
+              Réinitialiser les valeurs
+            </button>
+            <a className="sim-btn" href="https://goldnpatrimoine.netlify.app/" target="_blank" rel="noopener noreferrer">
+              Découvrir GOLD’N PATRIMOINE
+            </a>
           </div>
         </main>
 
         <footer className="sim-footer">
           <div className="sim-footer-row">
-            <div className="sim-sign"><strong>GOLD'N PATRIMOINE</strong><br/><span>Votre avenir commence ici.</span>
-             <div className="logo-sim">
-              <img src={LogoSim.src} alt="" />
-            </div>
+            <div className="sim-sign">
+              <strong>GOLD'N PATRIMOINE</strong><br />
+              <span>Votre avenir commence ici.</span>
+              <div className="logo-sim">
+                <img src={LogoSim.src} alt="Logo GOLD'N PATRIMOINE" />
+              </div>
             </div>
             <span>Simulation gratuite · Résultats indicatifs</span>
-           
           </div>
         </footer>
+
         <div className="sim-fineprint">
-          Important : cet outil est informatif et non contractuel. Il ne constitue pas une offre de prêt, un conseil financier personnalisé ou une décision officielle d’éligibilité au PTZ. Le calcul réel dépend de la commune exacte, des ressources retenues, de la nature du projet, des plafonds réglementaires, du calendrier de remboursement, de l’assurance, des frais et de l’analyse de la banque. Les frais d’acte et les conditions fiscales sont à vérifier pour chaque opération. Les données saisies restent dans cette page et ne sont pas transmises automatiquement.
+          Important : cet outil est informatif et non contractuel. Il ne constitue pas une offre de prêt, un conseil financier personnalisé ou une décision officielle d’éligibilité au PTZ. Le calcul réel dépend de la commune exacte, des ressources retenues, de la nature du projet, des plafonds réglementaires, du calendrier de remboursement, de l’assurance, des frais et de l’analyse de la banque. Les frais d’acte et les conditions fiscales sont à vérifier pour chaque opération. Les données de contact sont transmises uniquement lors de l’envoi volontaire de la demande.
         </div>
       </div>
     </div>

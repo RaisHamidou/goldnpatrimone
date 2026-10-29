@@ -1,0 +1,48 @@
+
+.housing-simulator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  margin: 48px auto;
+  padding: 42px;
+  border-radius: 15px;
+  background: var(--habiter-deep);
+  color: #fff;
+  width: 80%;
+  .eyebrow {
+    color: #e2bc7b;
+  }
+
+  h2 {
+    margin: 6px 0 12px;
+    font: 400 35px / 1.2 "Playfair Display", Georgia, serif;
+  }
+
+  p {
+    max-width: 650px;
+    margin: 0;
+    color: #e7d7c9;
+  }
+
+  .btn {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 950px) {
+  .housing-simulator {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 650px) {
+  .housing-simulator {
+    padding: 28px;
+
+    h2 {
+      font-size: 30px;
+    }
+  }
+}

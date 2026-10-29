@@ -1,0 +1,23 @@
+.about-quote {
+  padding: 65px 0;
+  background: #f2ebe1;
+  text-align: center;
+
+  &__content {
+    blockquote {
+      max-width: 900px;
+      margin: 0 auto;
+      color: #482c1b;
+      font: italic clamp(23px, 3vw, 35px) / 1.45 "Playfair Display",
+        Georgia, serif;
+    }
+
+    .eyebrow {
+      margin: 22px 0 0;
+    }
+  }
+
+  @media (max-width: 600px) {
+    padding: 50px 0;
+  }
+}

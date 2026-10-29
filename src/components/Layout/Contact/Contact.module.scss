@@ -1,0 +1,293 @@
+// Variables
+$bg-color: #f9f7f4;
+$card-bg: #ffffff;
+$primary-dark: #3a2c23;
+$gold-primary: #ca9e57;
+$gold-hover: #b58943;
+$gold-light: rgba(202, 158, 87, 0.08);
+$border-color: #e6dfd5;
+$text-muted: #736b63;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: $primary-dark;
+  position: relative;
+}
+
+.toast {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background-color: $primary-dark;
+  color: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid $gold-primary;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+
+  .toastIcon {
+    color: $gold-primary;
+    font-size: 1.25rem;
+  }
+}
+
+.card {
+  background: $card-bg;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(58, 44, 35, 0.05);
+  border: 1px solid $border-color;
+  display: grid;
+  grid-template-columns: 1fr;
+  overflow: hidden;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+// Global Header Styles
+.headers {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: $primary-dark;
+    margin: 0;
+  }
+}
+
+.iconCircle {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: $gold-light;
+  color: $gold-primary;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &.goldCircle {
+    background: rgba(202, 158, 87, 0.15);
+  }
+}
+
+// Section Formulaire
+.formColumn {
+  padding: 2.5rem;
+
+  @media (max-width: 576px) {
+    padding: 1.5rem;
+  }
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  &.fullWidth {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $primary-dark;
+  }
+
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 10px;
+    border: 1px solid $border-color;
+    background-color: $bg-color;
+    font-size: 0.95rem;
+    color: $primary-dark;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: lighten($text-muted, 20%);
+    }
+
+    &:focus {
+      border-color: $gold-primary;
+      background-color: #ffffff;
+      box-shadow: 0 0 0 4px rgba(202, 158, 87, 0.15);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+  }
+}
+
+.submitBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, $gold-primary, $gold-hover);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.95rem 2rem;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(202, 158, 87, 0.25);
+  margin-top: 0.5rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(202, 158, 87, 0.35);
+  }
+
+  .btnIcon {
+    transition: transform 0.2s ease;
+  }
+
+  &:hover .btnIcon {
+    transform: translateX(4px);
+  }
+}
+
+// Section Informations
+.infoColumn {
+  background-color: $bg-color;
+  padding: 2.5rem;
+  border-top: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: 992px) {
+    border-top: none;
+    border-left: 1px solid $border-color;
+  }
+}
+
+.infoIntro {
+  color: $text-muted;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
+}
+
+.infoCards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.infoCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: #ffffff;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: $gold-primary;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  }
+
+  .cardIcon {
+    font-size: 1.2rem;
+    color: $gold-primary;
+    display: flex;
+    align-items: center;
+  }
+
+  .cardLabel {
+    display: block;
+    font-size: 0.75rem;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .cardValue {
+    display: block;
+    font-weight: 600;
+    color: $primary-dark;
+    font-size: 0.95rem;
+  }
+}
+
+.goldBadge {
+  margin-top: auto;
+  background: linear-gradient(135deg, rgba(202, 158, 87, 0.12), rgba(202, 158, 87, 0.03));
+  border: 1px solid rgba(202, 158, 87, 0.3);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+
+  .badgeIcon {
+    color: $gold-primary;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  strong {
+    display: block;
+    color: $primary-dark;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: $text-muted;
+    line-height: 1.4;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

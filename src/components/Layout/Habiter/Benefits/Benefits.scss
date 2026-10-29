@@ -1,0 +1,129 @@
+
+.housing-benefits-section {
+  padding-top: 0;
+  padding-bottom: 20px;
+}
+
+.benefits-panel {
+  margin-top: 60px;
+  padding: 68px 30px;
+  border-radius: 14px;
+  background: linear-gradient(#faf8f3, #f6f1e8);
+
+  .benefits-heading {
+    .eyebrow {
+      font-size: 15px;
+      letter-spacing: 0.2em;
+    }
+
+    h2 {
+      margin: 16px 0;
+      color: #293137;
+      font: 400 clamp(30px, 3.5vw, 43px) / 1.2
+        "Playfair Display", Georgia, serif;
+    }
+
+    .lead {
+      margin: 0 0 42px;
+      color: #6d7880;
+      font-size: 16px;
+    }
+  }
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.benefit-card {
+  min-height: 275px;
+  padding: 25px;
+  border: 1px solid var(--habiter-line);
+  border-radius: 13px;
+  background: var(--habiter-paper);
+
+  &.wide {
+    grid-column: span 2;
+  }
+
+  .benefit-icon {
+    display: grid;
+    width: 65px;
+    height: 65px;
+    place-items: center;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    background: #bfa071;
+    color: #fff;
+    font-size: 29px;
+  }
+
+  h3 {
+    margin: 0 0 15px;
+    color: #81572d;
+    font-size: 16px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    position: relative;
+    margin: 10px 0;
+    padding-left: 22px;
+    color: #596570;
+    font-size: 13px;
+    line-height: 1.6;
+
+    &::before {
+      position: absolute;
+      left: 0;
+      color: #b58a45;
+      content: "✓";
+      font-weight: 700;
+    }
+  }
+}
+
+.benefits-quote {
+  margin: 44px 10px 0;
+  color: #bd9252;
+  font: italic 27px / 1.4 "Playfair Display", Georgia, serif;
+  text-align: right;
+}
+
+@media (max-width: 950px) {
+  .benefits-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 650px) {
+  .housing-benefits-section {
+    padding-bottom: 0;
+  }
+
+  .benefits-panel {
+    margin-top: 40px;
+    padding: 35px 15px;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benefit-card.wide {
+    grid-column: auto;
+  }
+
+  .benefits-quote {
+    font-size: 22px;
+  }
+}

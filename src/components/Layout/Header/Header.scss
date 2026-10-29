@@ -96,13 +96,13 @@ header {
     }
 
     a {
-      color: $dark_gold;
+      color: $dark_gold !important;
       font-family: $manrope;
       font-weight: 500;
       font-size: 1.05rem;
 
       &:hover {
-        color: lighten($dark_gold, 10);
+        color: lighten($dark_gold, 10) !important;
       }
       @media screen and (max-width: 800px) {
         font-size: 1.5rem;

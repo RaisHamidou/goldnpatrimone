@@ -1,0 +1,43 @@
+
+.about-home {
+  background: var(--sand);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 65px;
+}
+
+.about-photo {
+  height: 420px;
+  overflow: hidden;
+  border-radius: 12px;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.about-content {
+  p:not(.eyebrow) {
+    color: var(--muted);
+  }
+}
+
+@media (max-width: 850px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .about-photo {
+    height: 280px;
+  }
+}

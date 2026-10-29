@@ -28,15 +28,14 @@ export default function page() {
   return (
     <div>
        <Hero>
-               <h1>A propos de nous</h1>
-            <p>Découvrez une sélection de logements neufs et de biens soigneusement choisis pour répondre à tous vos projets.</p>
-            
-       {/*    <div className="container-buttons">
-            <CTA variant="filled"> 
-            Nos offres
-            </CTA>
-            
-          </div> */}
+              <h1>Votre projet immobilier mérite toute notre attention.</h1>
+              <p>
+               Bien plus qu’une recherche de logement, nous vous proposons un accompagnement humain, des conseils clairs et un large choix d’opportunités immobilières soigneusement sélectionnées.
+              </p>
+      
+              <div className="container-buttons">
+                <CTA href={"#notre-histoire"} variant="filled">Découvrir</CTA>
+              </div>
             </Hero>
       <About/>
       <Footer/>

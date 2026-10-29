@@ -1,8 +1,8 @@
 import React from 'react'
 
-export default function CTA({children, variant}) {
+export default function CTA({children, variant, href}) {
   return (
-    <a className={variant == "filled" ? "btn-filled": "btn-outline"}>
+    <a href={href} className={variant == "filled" ? "btn-filled": "btn-outline"}>
     {children}
     </a>
   )

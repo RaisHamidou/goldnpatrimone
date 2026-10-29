@@ -1,10 +1,12 @@
 import express from "express";
 import cors from "cors";
 const app = express();
-import contact from "./router/contact.js"
+import contactRouter from "./router/contact.js"; // ou le chemin de ton router
+import dotenv from "dotenv";
+dotenv.config();
 
 app.use(express.json())
-app.use(cors)
+app.use(cors())
 
-app.use('/api/contact');
+app.use("/api", contactRouter);
 export default app 

@@ -1,0 +1,51 @@
+
+.housing-intro {
+  background: var(--habiter-cream);
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: center;
+    gap: 75px;
+  }
+
+  .photo {
+    display: block;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 15px 32px #3b28121c;
+  }
+
+  h2 {
+    margin: 12px 0 22px;
+    font-size: clamp(33px, 4vw, 52px);
+    line-height: 1.12;
+  }
+
+  p:not(.eyebrow) {
+    margin-bottom: 26px;
+    color: #a37c51;
+    font-size: 17px;
+    line-height: 1.75;
+  }
+}
+
+@media (max-width: 950px) {
+  .housing-intro .split {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 650px) {
+  .housing-intro {
+    .split {
+      grid-template-columns: 1fr;
+    }
+
+    .photo {
+      height: 260px;
+    }
+  }
+}

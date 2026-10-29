@@ -1,219 +1,103 @@
-// Variables de couleurs extraites de l'image
-$color-text-brown: #3b231f;
-$color-text-grey: #7d7266;
-$color-gold: #cbb282;
-$color-bg-light: #f6f4ef;
-$color-bg-white: #ffffff;
-$color-border: #e8dfcd;
 
-.real-estate-section {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: $color-bg-light;
-  
+.habiter-page {
+  --habiter-gold: #d6aa5d;
+  --habiter-deep: #4a2c1b;
+  --habiter-brown: #5a3925;
+  --habiter-text: #574d43;
+  --habiter-cream: #faf7f1;
+  --habiter-line: #ead5b5;
+  --habiter-paper: #fffdfa;
+
+  color: var(--habiter-deep);
+  background: #fff;
+  font-family: "DM Sans", Arial, sans-serif;
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-
-
-  .hero-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 60px;
-    padding-top: 60px;
-    padding-bottom: 80px;
-
-    @media (max-width: 992px) {
-      flex-direction: column;
-      padding-top: 40px;
-      padding-bottom: 40px;
-    }
-  }
-
-  .hero-image-wrapper {
-    flex: 1;
     width: 100%;
-    max-width: 550px;
-
-    .hero-image {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      display: block;
-      object-fit: cover;
-    }
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 24px;
   }
 
-  .hero-content {
-    flex: 1;
-    max-width: 500px;
-
-    .hero-subtitle {
-      display: block;
-      color: $gold;
-      text-transform: uppercase;
-      font-size: 0.75rem;
-      letter-spacing: 1px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      font-family: $manrope;
-    }
-
-    .hero-title {
-      color: $coffee;
-      font-size: 2.8rem;
-      font-weight: 700;
-      line-height: 1.1;
-      margin-bottom: 20px;
-        font-family: $manrope;
-      @media (max-width: 480px) {
-        font-size: 2.2rem;
-      }
-    }
-
-    .hero-description {
-      color:#A3825C;
-      font-size: 1.05rem;
-      line-height: 1.6;
-      margin-bottom: 35px;
-      font-family: $manrope;
-      
-      br {
-        @media (max-width: 480px) {
-          display: none;
-        }
-      }
-    }
-
-    .hero-actions {
-      display: flex;
-      align-items: center;
-      gap: 30px;
-@media screen and (max-width:375px) {
-    //justify-content: center;
-       gap: 20px;
-      
-       }
-      .btn-outline {
-        background: transparent;
-        border: 2px solid $gold;
-        color: $coffee;
-        padding: 12px 24px;
-        border-radius: 4px;
-        font-weight: 600;
-        font-size: 0.95rem;
-       @media screen and (max-width:375px) {
-        font-size: .8rem;
-        padding: 10px 9px;
-       }
-
-        &:hover {
-          background-color: $gold;
-          color: white;
-        }
-      }
- 
-      .link-underlined {
-        color: $gold;
-        font-weight: 600;
-        text-decoration: none;
-        border-bottom: 2px solid $gold;
-        padding-bottom: 4px;
-        font-size: 0.95rem;
-            font-family: $manrope;
-@media screen and (max-width:375px) {
-        font-size: .8rem;
-       
-       }
-        &:hover {
-          opacity: 0.8;
-        }
-      }
-    }
+  .section {
+    padding: 76px 0;
   }
 
+  .center {
+    text-align: center;
+  }
 
-  .process-section {
-    background-color: $color-bg-white;
-    padding: 60px 0 80px 0;
+  .eyebrow {
+    color: #b68b48;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+  }
 
-    .process-title {
-      color: $gold;
-      font-size: 1.8rem;
-      margin-bottom: 40px;
-      font-weight: 600;
-          font-family: $manrope;
-          @media screen and (max-width:320px) {
-            font-size:1.5rem;
-          }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 22px;
+    border: 1px solid var(--habiter-gold);
+    border-radius: 6px;
+    background: var(--habiter-gold);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    transition:
+      transform 0.25s,
+      background 0.25s;
+
+    &:hover {
+      transform: translateY(-2px);
+      background: #bc8d43;
     }
 
-    .process-steps {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 50px;
-       margin-bottom: 50px;
-      @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: center;
+    &.outline {
+      border-color: #b88b4d;
+      background: transparent;
+      color: var(--habiter-brown);
+
+      &:hover {
+        background: #f8eedf;
       }
     }
 
-    .step-card {
-      flex: 1;
-      min-width: 160px;
-      background-color: #faf8f4; 
-      border: 1px solid $color-border;
-      border-radius: 8px;
-      padding: 30px 20px;
-      text-align: center;
-      min-height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative; 
-          font-family: $manrope;
-      span {
-        color: $color-text-grey;
-        font-size: 1.1rem;
-        font-weight: 500;
-        line-height: 1.4;
-      }
-
-      @media (max-width: 768px) {
-        width: 100%;
-        max-width: 350px;
-        min-height: 100px;
-      }
+    &:focus-visible {
+      outline: 2px solid #b88b4d;
+      outline-offset: 4px;
     }
   }
 }
 
-.cta-habiter{
-  width: 100%;
-  margin: 30px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (max-width: 650px) {
+  .habiter-page {
+    .container {
+      padding-inline: 18px;
+    }
 
-  .btn-outline{
-     &:hover {
-          background-color: $gold;
-          color: white;
-        
+    .section {
+      padding: 48px 0;
     }
   }
-
 }
 
-.img-avantage{
-  width: 60%;
-  img{
-    width: 100%Ò;
+@media (prefers-reduced-motion: reduce) {
+  .habiter-page .btn {
+    transition: none;
   }
 }

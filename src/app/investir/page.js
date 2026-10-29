@@ -28,14 +28,13 @@ export default function page() {
   return (
     <div>
       <Hero>
-        <h1>Investir</h1>
+        <h1>Faites de la pierre un <br/> véritable levier <br/> pour votre avenir</h1>
         <p>
-          Découvrez une sélection de logements neufs et de biens soigneusement
-          choisis pour répondre à tous vos projets.
+         Découvrez les différents dispositifs d’investissement immobilier et trouvez celui qui correspond à vos objectifs : optimiser votre fiscalité, générer des revenus complémentaires ou constituer un patrimoine.
         </p>
 
         <div className="container-buttons">
-          <CTA variant="filled">Découvrir</CTA>
+          <CTA href={"#_investissement__container"} variant="filled">Découvrir</CTA>
         </div>
       </Hero>
       <Investire />
