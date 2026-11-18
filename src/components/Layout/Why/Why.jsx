@@ -1,19 +1,23 @@
+import { GoHome, GoDiamond,GoHeart } from "react-icons/go";
+
+
+
 
 const advantages = [
   {
-    symbol: "⌂",
+    symbol: GoHome,
     title: "Des biens sélectionnés",
     description:
       "Nous recherchons des opportunités cohérentes avec vos besoins, votre budget et vos objectifs.",
   },
   {
-    symbol: "◇",
+    symbol: GoDiamond,
     title: "Des prix compétitifs",
     description:
       "Nous étudions les offres disponibles pour vous aider à faire un choix éclairé, sans frais cachés annoncés.",
   },
   {
-    symbol: "♡",
+    symbol: GoHeart,
     title: "Un suivi personnalisé",
     description:
       "De la découverte du projet aux démarches d’acquisition, nous restons à vos côtés.",
@@ -34,15 +38,20 @@ export default function Why() {
         </div>
 
         <div className="why-grid">
-          {advantages.map((item) => (
+          {advantages.map((item) => {
+            const Icon = item.symbol
+           return(
             <article className="why-card" key={item.title}>
               <div className="symbol" aria-hidden="true">
-                {item.symbol}
+              
+                <Icon/>
               </div>
               <h3>{item.title}</h3>
               <p>{item.description}</p>
             </article>
-          ))}
+           )
+            
+          })}
         </div>
       </div>
     </section>

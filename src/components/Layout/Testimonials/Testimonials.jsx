@@ -25,8 +25,7 @@ export default function Testimonials() {
           <p className="eyebrow">La confiance se construit</p>
           <h2>Ce que nos clients disent de nous</h2>
           <p className="lead">
-            Une place réservée à vos véritables témoignages clients,
-            à intégrer après leur accord.
+            Une place réservée à vos témoignages
           </p>
         </div>
 

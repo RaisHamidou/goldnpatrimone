@@ -9,7 +9,7 @@ const INITIAL = {
   zone: "A", people: "2", rfr: 45000, ptzPrice: 250000, homeType: "apt", firstBuyer: "yes", otherLoans: 200000,
   targetPrice: 250000, cash: 15000, ptzManual: 0, notaryRate: 2.5, guarantee: 2500, otherCosts: 1000,
   budgetIncome: 4000, budgetDebts: 0, budgetTerm: "25", budgetRate: 3.5, budgetInsurance: 0.3,
-  clientName: "", clientEmail: "", clientPhone: "", city: "",
+  clientName: "", clientSurname:"", clientEmail: "", clientPhone: "", LivingCity:"", city: "",
   projectType: "Résidence principale", contactConsent: "no",
 };
 
@@ -129,10 +129,19 @@ function SectionHead({ title, description, tag }) {
 
 export default function SimulateurImmobilier() {
   const [values, setValues] = useState({ ...INITIAL });
-  const [activeTab, setActiveTab] = useState("capacity");
+  let index = 0
+  const [activeTab, setActiveTab] = useState(index);
+  
   const [contactError, setContactError] = useState("");
   const [loading, setLoading] = useState(false);
   const [contactStatus, setContactStatus] = useState({ type: null, text: "" });
+
+  const next = ()=>{
+   setActiveTab(current => Math.min(current + 1, tabs.length -1))
+  }
+  const prev = ()=>{
+    setActiveTab(current => Math.max(current -1, 0))
+  }
 
   const setField = (event) => {
     const { name, value } = event.target;
@@ -266,6 +275,7 @@ export default function SimulateurImmobilier() {
     setContactStatus({ type: null, text: "" });
 
     const name = values.clientName.trim();
+    const surname = values.clientSurname.trim();
     const email = values.clientEmail.trim();
 
     if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -284,9 +294,12 @@ export default function SimulateurImmobilier() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name,
+            surname,
+
             email,
             tel: values.clientPhone.trim(),
             city: values.city.trim(),
+            livingCity: values.LivingCity.trim(),
             projectType: values.projectType,
             loan: capacity.loan,
             ptz: ptz.amount,
@@ -322,10 +335,10 @@ export default function SimulateurImmobilier() {
   };
 
   const tabs = [
-    { id: "capacity", label: "1. Capacité" },
-    { id: "ptz", label: "2. PTZ" },
-    { id: "budget", label: "3. Budget & frais" },
-    { id: "summary", label: "4. Synthèse" },
+    { id: 0, label: "1. Capacité" },
+    { id: 1, label: "2. PTZ" },
+    { id: 2, label: "3. Budget & frais" },
+    { id: 3, label: "4. Synthèse" },
   ];
 
   return (
@@ -346,7 +359,7 @@ export default function SimulateurImmobilier() {
         </nav>
 
         <main className="sim-main">
-          {activeTab === "capacity" && (
+          {activeTab === 0 && (
             <section className="sim-panel">
               <SectionHead
                 title="Votre capacité d’emprunt"
@@ -375,7 +388,7 @@ export default function SimulateurImmobilier() {
             </section>
           )}
 
-          {activeTab === "ptz" && (
+          {activeTab === 1 && (
             <section className="sim-panel">
               <SectionHead
                 title="Estimation du prêt à taux zéro (PTZ)"
@@ -415,7 +428,7 @@ export default function SimulateurImmobilier() {
             </section>
           )}
 
-          {activeTab === "budget" && (
+          {activeTab === 2 && (
             <section className="sim-panel">
               <SectionHead
                 title="Budget d’acquisition et frais"
@@ -448,7 +461,7 @@ export default function SimulateurImmobilier() {
             </section>
           )}
 
-          {activeTab === "summary" && (
+          {activeTab === 3 && (
             <section className="sim-panel">
               <SectionHead
                 title="La synthèse de votre projet"
@@ -469,9 +482,11 @@ export default function SimulateurImmobilier() {
               </div>
 
               <div className="sim-grid sim-contact-grid">
-                <Field label="Prénom et nom" name="clientName" type="text" value={values.clientName} onChange={setField} autoComplete="name" placeholder="Votre nom" maxLength={150} />
+                <Field label="Prénom" name="clientName" type="text" value={values.clientName} onChange={setField} autoComplete="name" placeholder="Votre Prénom" maxLength={150} />
+                <Field label="Nom" name="clientSurname" type="text" value={values.clientSurname} onChange={setField} autoComplete="name" placeholder="Votre nom" maxLength={150} />
                 <Field label="E-mail" name="clientEmail" type="email" value={values.clientEmail} onChange={setField} autoComplete="email" placeholder="vous@exemple.fr" maxLength={254} />
                 <Field label="Téléphone" name="clientPhone" type="tel" value={values.clientPhone} onChange={setField} autoComplete="tel" placeholder="06 00 00 00 00" maxLength={40} />
+                <Field label="Ville de résidence." name="LivingCity" type="text" value={values.Livingcity} onChange={setField} placeholder="Ex. Chessy, Noisiel…" maxLength={150} />
                 <Field label="Ville ou secteur recherché" name="city" type="text" value={values.city} onChange={setField} placeholder="Ex. Chessy, Noisiel…" maxLength={150} />
                 <Field
                   label="Votre projet"
@@ -515,12 +530,19 @@ export default function SimulateurImmobilier() {
           )}
 
           <div className="sim-actions sim-global-actions">
+          <a className="sim-btn" href="https://goldnpatrimoine.netlify.app/" target="_blank" rel="noopener noreferrer">
+              Contacter Gold’n Patrimoine
+            </a>
             <button className="sim-btn sim-btn--secondary" type="button" onClick={reset} disabled={loading}>
               Réinitialiser les valeurs
             </button>
-            <a className="sim-btn" href="https://goldnpatrimoine.netlify.app/" target="_blank" rel="noopener noreferrer">
-              Découvrir GOLD’N PATRIMOINE
-            </a>
+            
+            <button className="sim-btn sim-btn--secondary" type="button"  onClick={prev} disabled={loading || activeTab === 0}>
+  Précédent
+</button>
+            <button className="sim-btn sim-btn--secondary" type="button" onClick={()=> next()} disabled={loading || activeTab === activeTab.length -1}>
+              Suivant
+            </button>
           </div>
         </main>
 

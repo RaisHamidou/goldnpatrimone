@@ -1,11 +1,14 @@
 
+"use client"
+import ContactPopup from "@/components/ContactPopup/ContactPopup";
 import "./HousingClosing.scss";
-
+import React, {useState} from 'react';
 export default function HousingClosing() {
+    const [isOpen, setIsOpen] = useState(false);
   return (
     <section className="housing-closing">
       <div className="container">
-        <a className="btn outline" href="/contact">
+        <a onClick={()=>setIsOpen(true)} className="btn outline">
           Échanger avec un conseiller →
         </a>
 
@@ -14,6 +17,7 @@ export default function HousingClosing() {
           les programmes et les situations individuelles.
         </p>
       </div>
+      <ContactPopup isOpen={isOpen} setIsOpen={setIsOpen}/>
     </section>
   );
 }

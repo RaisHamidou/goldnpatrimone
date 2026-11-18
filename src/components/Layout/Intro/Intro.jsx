@@ -1,4 +1,5 @@
 
+
 export default function Intro() {
   return (
     <section className="section intro" id="nos-solutions">
@@ -32,7 +33,7 @@ export default function Intro() {
                 quotidien et vos envies.
               </p>
               <a className="btn outline" href="/habiter">
-                Découvrir les logements →
+                Découvrir les avantages →
               </a>
             </div>
           </article>
@@ -53,7 +54,7 @@ export default function Intro() {
                 sélection d’opportunités immobilières.
               </p>
               <a className="btn outline" href="/investir">
-                Explorer l’investissement →
+                Explorer les dispositifs →
               </a>
             </div>
           </article>

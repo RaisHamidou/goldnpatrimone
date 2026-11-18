@@ -38,9 +38,9 @@ export default function Footer() {
       <h3>Conditions</h3>
         <ul>
           <li><a href='/conditions/mentions-legales'>Mentions légales</a></li>
+          <li><a href='/conditions/confidentialite'>Politique de confidentialité</a></li>
           <li><a href='/conditions/cgu'>Condition général d’utilisation</a></li>
-          <li><a href='/conditions/cgv'>Condition général de vente</a></li>
-          <li><a href='/conditions/politique-des-cookies'>politique des cookies</a></li>
+          <li><a href='/conditions/cookies'>Politique des cookies</a></li>
         </ul>
       </div>
       <div className="info">

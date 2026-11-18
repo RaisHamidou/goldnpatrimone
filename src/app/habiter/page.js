@@ -31,7 +31,7 @@ export default function page() {
             
           <div className="container-buttons">
             <CTA href={"#decouvrir"} variant="filled"> 
-            Découvrir
+            Découvrir les avantages
             </CTA>
             
           </div>

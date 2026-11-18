@@ -244,7 +244,7 @@ export default function InvestissementImmobilier() {
               immobilières adaptées à vos objectifs.
             </p>
 
-            <a className="investissement__button" href="/isimulateur/investissement-locatif">
+            <a className="investissement__button" href="/simulateur/investissement-locatif">
               Faire une étude personnalisée <span aria-hidden="true">→</span>
             </a>
           </div>

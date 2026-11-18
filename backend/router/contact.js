@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 dotenv.config();
 const router = express.Router();
 
+
+
 // On garde le nom cohérent : "EmailContact" ou changez tout en "contactEmail"
 const EmailContact = nodemailer.createTransport({
   service: "gmail",
@@ -96,8 +98,10 @@ router.post("/simulateur-immobilier", async (req, res) => {
   try {
     const {
       name,
+      surname,
       email,
       tel,
+      livingCity,
       city,
       projectType,
       loan,
@@ -168,8 +172,10 @@ router.post("/simulateur-immobilier", async (req, res) => {
     }
 
     const safeName = escapeHtml(name.trim());
+    const safeSurName = escapeHtml(surname.trim());
     const safeEmail = escapeHtml(email.trim());
     const safeTel = escapeHtml(tel?.trim() || "Non renseigné");
+    const safeLivingCity = escapeHtml(city?.trim() || "Non renseigné");
     const safeCity = escapeHtml(city?.trim() || "Non renseigné");
     const safeProject = escapeHtml(
       projectType?.trim() || "Non renseigné"
@@ -210,9 +216,11 @@ router.post("/simulateur-immobilier", async (req, res) => {
       text: `
 Nouvelle demande depuis le simulateur immobilier GOLD'N PATRIMOINE
 
-Nom : ${name.trim()}
+Nom : ${surname.trim()}
+Prénom : ${name.trim()}
 E-mail : ${email.trim()}
 Téléphone : ${tel?.trim() || "Non renseigné"}
+Ville de Résidence : ${livingCity?.trim() || "Non renseigné"}
 Secteur recherché : ${city?.trim() || "Non renseigné"}
 Type de projet : ${projectType?.trim() || "Non renseigné"}
 
@@ -283,30 +291,62 @@ const formatEuroEtude = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value) || 0);
 
-router.post("/etude-personnalisee", async (req, res) => {
+router.post("/investissement-locatif", async (req, res) => {
   try {
     const {
       name,
+      surname,
       email,
       tel,
       city,
       projectType,
+
+      // Financement
       loan,
+      ptz,
       budget,
       financingNeeded,
       monthlyPayment,
-      rental,
-      works,
+
+      // Informations financières
+      income,
+      debts,
+      tmi,
+      goal,
+
+      // Bien immobilier
+      propertyType,
+      rentalMode,
+      price,
       rent,
-      vacancy,
+      deposit,
+      years,
+      rate,
+      insurance,
+      fees,
+      works,
+      charges,
+      propertyTax,
+
+      // Résultats de la simulation
       grossYield,
+      netRent,
+      cashFlow,
+      debtRatio,
+
+      // Conseils et avertissements
+      advice,
+      warnings,
+
+      // Anciens champs conservés
+      vacancy,
       netYield,
       monthlyCashFlow,
       taxBracket,
       alreadyLandlord,
       schemes,
       summary,
-    } = req.body || {};
+    } = req.body ?? {};
 
     // Vérification des champs indispensables
     if (
@@ -335,23 +375,58 @@ router.post("/etude-personnalisee", async (req, res) => {
       });
     }
 
+    // Helpers de sécurisation et de formatage
+    const safeValue = (value, fallback = "Non renseigné") => {
+      if (value === undefined || value === null || value === "") {
+        return fallback;
+      }
+
+      if (typeof value !== "string" && typeof value !== "number") {
+        return fallback;
+      }
+
+      return escapeHtmlEtude(String(value));
+    };
+
+    const safeText = (value, fallback = "Non renseigné") => {
+      if (typeof value !== "string" || !value.trim()) {
+        return fallback;
+      }
+
+      return value.trim();
+    };
+
+    const safeArray = (value) => {
+      if (!Array.isArray(value)) return [];
+
+      return value
+        .filter((item) => typeof item === "string" || typeof item === "number")
+        .map((item) => String(item).slice(0, 1000));
+    };
+
     const safeName = escapeHtmlEtude(name.trim());
+      const safesurname = escapeHtmlEtude(surname.trim());
     const safeEmail = escapeHtmlEtude(email.trim());
-    const safeTel = escapeHtmlEtude(
-      typeof tel === "string" ? tel.trim() : ""
+    const safeTel = safeValue(tel);
+    const safeCity = safeValue(city);
+    const safeProject = safeValue(projectType);
+
+    const safeAdvice = escapeHtmlEtude(
+      typeof advice === "string" ? advice.slice(0, 5000) : "Aucun conseil fourni."
     );
-    const safeCity = escapeHtmlEtude(
-      typeof city === "string" ? city.trim() : ""
-    );
-    const safeProject = escapeHtmlEtude(projectType || "Non précisé");
+
+    const safeWarnings = safeArray(warnings)
+      .map((warning) => `<li>${escapeHtmlEtude(warning)}</li>`)
+      .join("");
 
     const safeSchemes = Array.isArray(schemes)
       ? schemes
+          .filter((scheme) => Array.isArray(scheme))
           .map((scheme) => {
-            if (!Array.isArray(scheme)) return "";
-
-            const title = escapeHtmlEtude(scheme[0] || "");
-            const description = escapeHtmlEtude(scheme[1] || "");
+            const title = escapeHtmlEtude(String(scheme[0] ?? "").slice(0, 500));
+            const description = escapeHtmlEtude(
+              String(scheme[1] ?? "").slice(0, 1000)
+            );
 
             return title
               ? `<li><strong>${title}</strong> : ${description}</li>`
@@ -361,105 +436,201 @@ router.post("/etude-personnalisee", async (req, res) => {
           .join("")
       : "";
 
-    const safeSummary =
-      typeof summary === "string" && summary.trim()
-        ? escapeHtmlEtude(summary.trim())
-        : "Aucun résumé fourni.";
+    const safeSummary = escapeHtmlEtude(
+      typeof summary === "string"
+        ? summary.slice(0, 10000)
+        : "Aucun résumé fourni."
+    );
 
+    const landlordLabel =
+      alreadyLandlord === "yes"
+        ? "Oui"
+        : alreadyLandlord === "no"
+          ? "Non"
+          : "Non précisé";
+
+    const projectRows = [
+      ["Revenus mensuels", formatEuroEtude(income)],
+      ["Crédits et charges mensuels", formatEuroEtude(debts)],
+      ["Tranche marginale d'imposition", `${safeValue(tmi)} %`],
+      ["Objectif", safeValue(goal)],
+      ["Type de bien", safeValue(propertyType)],
+      ["Mode de location", safeValue(rentalMode)],
+      ["Prix du bien", formatEuroEtude(price)],
+      ["Apport personnel", formatEuroEtude(deposit)],
+      ["Durée du crédit", `${safeValue(years)} ans`],
+      ["Taux du crédit", `${safeValue(rate)} %`],
+      ["Assurance", `${safeValue(insurance)} %`],
+      ["Frais", formatEuroEtude(fees)],
+      ["Travaux", formatEuroEtude(works)],
+      ["Charges", formatEuroEtude(charges)],
+      ["Taxe foncière", formatEuroEtude(propertyTax)],
+      ["Loyer mensuel", formatEuroEtude(rent)],
+      ["Rendement brut", `${safeValue(grossYield, "Non calculé")} %`],
+      ["Loyer net estimé", formatEuroEtude(netRent)],
+      ["Cash-flow mensuel", formatEuroEtude(cashFlow)],
+      ["Taux d'endettement", `${safeValue(debtRatio, "Non calculé")} %`],
+      ["Emprunt estimé", formatEuroEtude(loan)],
+      ["PTZ", formatEuroEtude(ptz)],
+      ["Budget global", formatEuroEtude(budget)],
+      ["Financement nécessaire", formatEuroEtude(financingNeeded)],
+      ["Mensualité avec assurance", formatEuroEtude(monthlyPayment)],
+    ];
+
+    const htmlRows = projectRows
+      .map(
+        ([label, value]) => `
+          <tr>
+            <td style="border:1px solid #ddd;padding:9px">
+              <strong>${escapeHtmlEtude(label)}</strong>
+            </td>
+            <td style="border:1px solid #ddd;padding:9px">
+              ${escapeHtmlEtude(String(value))}
+            </td>
+          </tr>
+        `
+      )
+      .join("");
+
+    const textRows = projectRows
+      .map(([label, value]) => `${label} : ${value}`)
+      .join("\n");
+
+    // Contenu de l'e-mail
     const mailOptions = {
       from: process.env.EMAIL,
       to: process.env.CONTACT_EMAIL,
       replyTo: email.trim(),
       subject: `Nouvelle étude personnalisée — ${name.trim()}`,
+
       text: `
 NOUVELLE ÉTUDE PERSONNALISÉE — GOLD'N PATRIMOINE
 
 COORDONNÉES
-Nom : ${name.trim()}
+Prénom : ${name.trim()}
+Nom : ${surname.trim()}
 E-mail : ${email.trim()}
-Téléphone : ${typeof tel === "string" && tel.trim() ? tel.trim() : "Non renseigné"}
-Ville / secteur : ${typeof city === "string" && city.trim() ? city.trim() : "Non précisé"}
+Téléphone : ${safeText(tel)}
+Ville / secteur : ${safeText(city)}
 
 PROJET
-Objectif et type de bien : ${projectType || "Non précisé"}
-Type de location : ${rental || "Non précisé"}
-Travaux : ${works || "Non précisé"}
+Objectif et type de bien : ${safeText(projectType)}
+Type de bien : ${safeText(propertyType)}
+Mode de location : ${safeText(rentalMode)}
 
-RÉSULTATS ESTIMÉS
-Budget global : ${formatEuroEtude(budget)}
-Financement nécessaire : ${formatEuroEtude(financingNeeded ?? loan)}
-Emprunt estimé : ${formatEuroEtude(loan)}
-Mensualité avec assurance : ${formatEuroEtude(monthlyPayment)}
-Loyer mensuel : ${formatEuroEtude(rent)}
+INFORMATIONS ET RÉSULTATS DE LA SIMULATION
+${textRows}
+
+CONSEIL PERSONNALISÉ
+${safeText(advice, "Aucun conseil fourni.")}
+
+POINTS DE VIGILANCE
+${safeArray(warnings).length
+  ? safeArray(warnings).join("\n")
+  : "Aucun point de vigilance renseigné."}
+
+DISPOSITIFS À APPROFONDIR
+${Array.isArray(schemes)
+  ? schemes
+      .filter((scheme) => Array.isArray(scheme))
+      .map((scheme) => `${scheme[0] ?? ""} : ${scheme[1] ?? ""}`)
+      .join("\n")
+  : "Non renseigné"}
+
+RÉSUMÉ COMPLET
+${safeText(summary, "Aucun résumé fourni.")}
+
+ANCIENS INDICATEURS
 Vacance locative : ${vacancy ?? "Non précisée"} mois/an
-Rendement brut : ${grossYield ?? "Non calculé"} %
 Rendement net : ${netYield ?? "Non calculé"} %
 Cash-flow mensuel avant impôts : ${formatEuroEtude(monthlyCashFlow)}
 Tranche d'imposition : ${taxBracket ?? "Non précisée"} %
-Déjà propriétaire bailleur : ${alreadyLandlord === "yes" ? "Oui" : alreadyLandlord === "no" ? "Non" : "Non précisé"}
+Déjà propriétaire bailleur : ${landlordLabel}
 
-RÉSUMÉ COMPLET
-${typeof summary === "string" ? summary : "Aucun résumé fourni."}
+Simulation indicative et non contractuelle.
       `.trim(),
+
       html: `
         <div style="font-family:Arial,sans-serif;color:#222;line-height:1.6;max-width:720px;margin:auto">
-          <h1 style="font-size:22px">Nouvelle étude personnalisée</h1>
-          <p>Une nouvelle demande a été envoyée depuis le simulateur GOLD'N PATRIMOINE.</p>
+
+          <h1 style="font-size:22px">
+            Nouvelle étude personnalisée
+          </h1>
+
+          <p>
+            Une nouvelle demande a été envoyée depuis le simulateur
+            GOLD'N PATRIMOINE.
+          </p>
 
           <h2>Coordonnées du prospect</h2>
-          <p><strong>Nom :</strong> ${safeName}</p>
-          <p><strong>E-mail :</strong> <a href="mailto:${safeEmail}">${safeEmail}</a></p>
-          <p><strong>Téléphone :</strong> ${safeTel || "Non renseigné"}</p>
-          <p><strong>Ville / secteur :</strong> ${safeCity || "Non précisé"}</p>
+
+          <p><strong>Prénom :</strong> ${safesurname}</p>
+           <p><strong>Nom :</strong> ${safeName}</p>
+          <p>
+            <strong>E-mail :</strong>
+            <a href="mailto:${safeEmail}">${safeEmail}</a>
+          </p>
+          <p><strong>Téléphone :</strong> ${safeTel}</p>
+          
 
           <h2>Projet immobilier</h2>
-          <p><strong>Objectif :</strong> ${safeProject}</p>
-          <p><strong>Location :</strong> ${escapeHtmlEtude(rental || "Non précisé")}</p>
-          <p><strong>Travaux :</strong> ${escapeHtmlEtude(works || "Non précisé")}</p>
 
-          <h2>Résultats estimés</h2>
+          <p><strong>Objectif :</strong> ${safeProject}</p>
+          <p><strong>Type de bien :</strong> ${safeValue(propertyType)}</p>
+          <p><strong>Mode de location :</strong> ${safeValue(rentalMode)}</p>
+
+          <h2>Informations financières et résultats estimés</h2>
+
           <table style="border-collapse:collapse;width:100%">
             <tbody>
-              ${[
-                ["Budget global", formatEuroEtude(budget)],
-                ["Emprunt estimé", formatEuroEtude(loan)],
-                ["Financement nécessaire", formatEuroEtude(financingNeeded ?? loan)],
-                ["Mensualité avec assurance", formatEuroEtude(monthlyPayment)],
-                ["Loyer mensuel", formatEuroEtude(rent)],
-                ["Vacance locative", `${escapeHtmlEtude(vacancy ?? "Non précisée")} mois/an`],
-                ["Rendement brut", `${escapeHtmlEtude(grossYield ?? "Non calculé")} %`],
-                ["Rendement net", `${escapeHtmlEtude(netYield ?? "Non calculé")} %`],
-                ["Cash-flow mensuel avant impôts", formatEuroEtude(monthlyCashFlow)],
-                ["Tranche d'imposition", `${escapeHtmlEtude(taxBracket ?? "Non précisée")} %`],
-                [
-                  "Déjà propriétaire bailleur",
-                  alreadyLandlord === "yes" ? "Oui" : alreadyLandlord === "no" ? "Non" : "Non précisé",
-                ],
-              ]
-                .map(
-                  ([label, value]) => `
-                    <tr>
-                      <td style="border:1px solid #ddd;padding:9px"><strong>${label}</strong></td>
-                      <td style="border:1px solid #ddd;padding:9px">${value}</td>
-                    </tr>
-                  `
-                )
-                .join("")}
+              ${htmlRows}
             </tbody>
           </table>
 
+          <h2>Conseil personnalisé</h2>
+
+          <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;background:#f6f6f6;padding:16px;border-radius:8px">${safeAdvice}</pre>
+
           ${
-            safeSchemes
-              ? `<h2>Dispositifs à approfondir</h2><ul>${safeSchemes}</ul>`
+            safeWarnings
+              ? `
+                <h2>Points de vigilance</h2>
+                <ul>${safeWarnings}</ul>
+              `
               : ""
           }
 
-          <h2>Résumé complet de l'étude</h2>
-          <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;background:#f6f6f6;padding:16px;border-radius:8px">${safeSummary}</pre>
+          ${
+            safeSchemes
+              ? `
+                <h2>Dispositifs à approfondir</h2>
+                <ul>${safeSchemes}</ul>
+              `
+              : ""
+          }
 
-          <p style="font-size:12px;color:#666">
-            Simulation indicative, non contractuelle, à vérifier selon la situation du prospect.
+          ${
+            summary
+              ? `
+                <h2>Résumé complet de l'étude</h2>
+                <pre style="white-space:pre-wrap;font-family:Arial,sans-serif;background:#f6f6f6;padding:16px;border-radius:8px">${safeSummary}</pre>
+              `
+              : ""
+          }
+
+          <h2>Anciennes informations de l'étude</h2>
+
+          <p><strong>Vacance locative :</strong> ${safeValue(vacancy)} mois/an</p>
+          <p><strong>Rendement net :</strong> ${safeValue(netYield)} %</p>
+          <p><strong>Cash-flow mensuel :</strong> ${formatEuroEtude(monthlyCashFlow)}</p>
+          <p><strong>Tranche d'imposition :</strong> ${safeValue(taxBracket)} %</p>
+          <p><strong>Déjà propriétaire bailleur :</strong> ${landlordLabel}</p>
+
+          <p style="font-size:12px;color:#666;margin-top:24px">
+            Simulation indicative, non contractuelle, à vérifier selon
+            la situation du prospect.
           </p>
+
         </div>
       `,
     };
@@ -470,8 +641,12 @@ ${typeof summary === "string" ? summary : "Aucun résumé fourni."}
       status: "Message Sent",
       message: "Étude transmise avec succès.",
     });
+
   } catch (error) {
-    console.error("Erreur envoi étude personnalisée :", error.message);
+    console.error(
+      "Erreur envoi étude personnalisée :",
+      error.message
+    );
 
     return res.status(500).json({
       status: "error",

@@ -1,99 +1,263 @@
-
-
 "use client";
 
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import "./EtudePersonnalisee.scss";
+import { useMemo, useRef, useState } from "react";
 
 const INITIAL_VALUES = {
+  income: "3500",
+  debts: "500",
+  tmi: "30",
   goal: "income",
-  property: "new",
-  rental: "unknown",
-  works: "no",
-  price: 220000,
-  contribution: 20000,
-  fees: 7000,
-  workcost: 0,
-  rate: 3.5,
-  years: "20",
-  insurance: 0.3,
-  rent: 850,
-  vacancy: 0.5,
-  tax: 1000,
-  copro: 900,
-  manage: 7,
-  other: 300,
-  bracket: "unknown",
-  existing: "no",
-  location: "",
-  firstName: "",
+  price: "220000",
+  rent: "850",
+  deposit: "20000",
+  years: "25",
+  rate: "3.5",
+  insurance: "0.30",
+  type: "new",
+  furnished: "either",
+  fees: "5500",
+  works: "3000",
+  charges: "85",
+  propertytax: "900",
+  name: "",
+  surname: "",
   email: "",
-  contactConsent: false,
   tel: "",
 };
 
-const GOALS = {
-  income: "Générer des revenus complémentaires",
-  tax: "Étudier les avantages fiscaux",
-  wealth: "Constituer un patrimoine",
-  retirement: "Préparer ma retraite",
+// FORMATAGE
+const euro = (value) => `${Math.round(value).toLocaleString("fr-FR")} €`;
+
+const percent = (value, decimals = 2) =>
+  `${value.toFixed(decimals).replace(".", ",")} %`;
+
+// CONVERSION DES NOMBRES
+const toNumber = (value) => {
+  if (typeof value === "number") return value;
+
+  const normalized = String(value)
+    .replace(/[\s\u00A0\u202F]/g, "")
+    .replace(",", ".");
+
+  return normalized === "" ? NaN : Number(normalized);
 };
 
-const PROPERTY_LABELS = {
-  new: "Immobilier neuf",
-  old: "Immobilier ancien",
-  either: "Neuf ou ancien",
-};
+// CALCUL DU PROJET
+function calculateProject(values) {
+  const fields = [
+    "price",
+    "rent",
+    "deposit",
+    "fees",
+    "works",
+    "years",
+    "rate",
+    "insurance",
+    "charges",
+    "propertytax",
+    "income",
+    "debts",
+  ];
 
-const RENTAL_LABELS = {
-  unknown: "À déterminer",
-  furnished: "Location meublée",
-  bare: "Location non meublée",
-};
+  const numbers = Object.fromEntries(
+    fields.map((field) => [field, toNumber(values[field])])
+  );
 
-const WORK_LABELS = {
-  no: "Non",
-  yes: "Oui",
-  unknown: "À déterminer",
-};
+  const valid =
+    Object.values(numbers).every(
+      (value) => Number.isFinite(value) && value >= 0
+    ) &&
+    numbers.price > 0 &&
+    numbers.years > 0 &&
+    numbers.years <= 30 &&
+    numbers.rate <= 20 &&
+    numbers.insurance <= 5;
 
-function formatEuro(value) {
-  return new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(value);
+  if (!valid) {
+    return { valid: false };
+  }
+
+  const {
+    price,
+    rent,
+    deposit,
+    fees,
+    works,
+    years,
+    rate,
+    insurance,
+    charges,
+    propertytax,
+    income,
+    debts,
+  } = numbers;
+
+  const total = price + fees + works;
+  const loan = Math.max(0, total - deposit);
+
+  const months = years * 12;
+  const monthlyRate = rate / 1200;
+
+  const loanPayment =
+    loan === 0
+      ? 0
+      : loan *
+        (monthlyRate === 0
+          ? 1 / months
+          : monthlyRate / (1 - Math.pow(1 + monthlyRate, -months)));
+
+  const monthlyInsurance = (loan * insurance) / 1200;
+  const monthlyPayment = loanPayment + monthlyInsurance;
+
+  const netRent = rent * 0.95 - charges - propertytax / 12;
+
+  const cashFlow = netRent - monthlyPayment;
+
+  const grossYield = total > 0 ? ((rent * 12) / total) * 100 : 0;
+
+  const debtRatio =
+    income > 0 ? ((debts + monthlyPayment) / income) * 100 : null;
+
+  return {
+    valid: true,
+    ...numbers,
+    total,
+    loan,
+    monthlyPayment,
+    netRent,
+    cashFlow,
+    grossYield,
+    debtRatio,
+  };
 }
 
-function formatPercent(value) {
-  return `${new Intl.NumberFormat("fr-FR", {
-    maximumFractionDigits: 2,
-  }).format(value)} %`;
+// CONSEILS
+function getAdvice(values, results) {
+  const suggestions = [];
+
+  const { type, furnished, goal, tmi } = values;
+  const { cashFlow, grossYield } = results;
+
+  if (type === "new") {
+    suggestions.push({
+      title: "Location nue dans le neuf",
+      description:
+        "Une piste cohérente pour une stratégie patrimoniale de long terme, sous réserve de la demande locative et du niveau de loyer.",
+    });
+
+    if (furnished !== "bare") {
+      suggestions.push({
+        title: "Location meublée (LMNP si éligible)",
+        description:
+          "À comparer à la location nue : le régime fiscal dépend des recettes, des charges, du choix micro/réel et des règles en vigueur.",
+      });
+    }
+  } else if (type === "works") {
+    suggestions.push({
+      title: "Location nue avec travaux et déficit foncier",
+      description:
+        "À étudier si les travaux sont fiscalement déductibles et si le bien est loué nu, avec les conditions et plafonds applicables.",
+    });
+
+    suggestions.push({
+      title: "Denormandie, sous conditions",
+      description:
+        "Possible uniquement pour certains biens anciens, communes, travaux et engagements locatifs éligibles. Vérifiez les règles en vigueur.",
+    });
+  } else {
+    suggestions.push({
+      title: "Location nue",
+      description:
+        "Stratégie à comparer entre micro-foncier et régime réel selon les charges et votre situation.",
+    });
+
+    if (furnished !== "bare") {
+      suggestions.push({
+        title: "Location meublée (LMNP si éligible)",
+        description:
+          "Peut être pertinente selon la demande locale et les dépenses, sans garantie d'avantage fiscal.",
+      });
+    }
+  }
+
+  if (goal === "tax" && tmi !== "unknown" && Number(tmi) >= 30) {
+    suggestions.sort(
+      (a, b) =>
+        Number(!/travaux|déficit|LMNP/i.test(a.title)) -
+        Number(!/travaux|déficit|LMNP/i.test(b.title))
+    );
+  }
+
+  if (goal === "effort" && cashFlow < 0) {
+    suggestions.unshift({
+      title: "Améliorer l’équilibre du projet",
+      description:
+        "Comparer un prix d’achat inférieur, un loyer réaliste plus élevé ou un apport supérieur, sans dépasser votre capacité financière.",
+    });
+  }
+
+  if (goal === "income" && grossYield < 4) {
+    suggestions.unshift({
+      title: "Vérifier le rendement",
+      description:
+        "Le rendement brut est relativement limité. Comparez d’autres biens ou marchés locatifs, sans négliger les risques.",
+    });
+  }
+
+  return suggestions.slice(0, 3);
 }
 
-function numberValue(value) {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) ? parsed : 0;
+// POINTS DE VIGILANCE
+function getWarnings(values, results) {
+  const warnings = [];
+
+  if (results.debtRatio !== null && results.debtRatio > 35) {
+    warnings.push(
+      "Les mensualités de crédits représentent plus de 35 % des revenus renseignés, avant tout traitement bancaire des revenus locatifs : faisabilité à vérifier avec un prêteur."
+    );
+  }
+
+  if (Number(values.deposit) > results.total) {
+    warnings.push(
+      "L’apport dépasse le coût total du projet : aucun crédit n’est nécessaire dans cette simulation."
+    );
+  }
+
+  if (values.tmi === "unknown") {
+    warnings.push(
+      "Renseigner votre TMI peut aider à hiérarchiser les pistes fiscales, sans permettre un calcul d’impôt fiable."
+    );
+  }
+
+  if (values.type === "new") {
+    warnings.push(
+      "Dans le neuf, vérifiez les charges de copropriété prévisionnelles et les éventuelles conditions de location du programme."
+    );
+  }
+
+  warnings.push(
+    "Vérifiez le loyer de marché, les frais de gestion, l’assurance propriétaire non occupant, la vacance locative et la fiscalité réelle."
+  );
+
+  return warnings;
 }
 
-function Field({
+// CHAMP DE SAISIE
+function InputField({
   label,
   name,
   values,
   onChange,
-  type = "text",
+  type = "number",
   min,
   max,
-  maxLength,
   step,
-  required = false,
-  hint,
-  wide = false,
-  placeholder,
+  required = true,
+  autoComplete,
   children,
 }) {
   return (
-    <div className={`etude-field${wide ? " etude-field--wide" : ""}`}>
+    <div className="investment-field">
       <label htmlFor={name}>{label}</label>
 
       {children || (
@@ -101,524 +265,603 @@ function Field({
           id={name}
           name={name}
           type={type}
-          value={values[name] ?? ""}
+          value={values[name]}
           onChange={onChange}
           min={min}
           max={max}
-          maxLength={maxLength}
-          step={step}
+          step={step ?? (type === "number" ? "any" : undefined)}
           required={required}
-          placeholder={placeholder}
+          autoComplete={autoComplete}
         />
       )}
-
-      {hint && <span className="etude-small">{hint}</span>}
     </div>
   );
 }
 
-function SelectField({ label, name, values, onChange, options, wide = false }) {
-  return (
-    <Field label={label} name={name} values={values} onChange={onChange} wide={wide}>
-      <select id={name} name={name} value={values[name]} onChange={onChange}>
-        {options.map(([value, text]) => (
-          <option key={value} value={value}>{text}</option>
-        ))}
-      </select>
-    </Field>
-  );
-}
-
-export default function EtudePersonnalisee() {
+// SIMULATEUR
+export default function SimulateurInvestissement() {
   const [values, setValues] = useState(INITIAL_VALUES);
-  const [step, setStep] = useState(0);
   const [error, setError] = useState("");
-  const [sendHint, setSendHint] = useState("");
-  const [sendStatus, setSendStatus] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [resultsVisible, setResultsVisible] = useState(false);
-  const [studySent, setStudySent] = useState(false);
 
-  const pendingScrollY = useRef(null);
+  const formRef = useRef(null);
 
-useLayoutEffect(() => {
-  if (pendingScrollY.current === null) return;
+  const results = useMemo(() => calculateProject(values), [values]);
 
-  const scrollPosition = pendingScrollY.current;
-  pendingScrollY.current = null;
+  const advice = useMemo(
+    () => (results.valid ? getAdvice(values, results) : []),
+    [values, results]
+  );
 
-  window.scrollTo({
-    top: scrollPosition,
-    left: 0,
-    behavior: "auto",
-  });
-}, [step]);
+  const warnings = useMemo(
+    () => (results.valid ? getWarnings(values, results) : []),
+    [values, results]
+  );
 
-const updateValue = (event) => {
-  const { name, value, type, checked } = event.target;
+  // MISE À JOUR DES CHAMPS
+  const updateValue = (event) => {
+    const { name, value } = event.target;
 
-  setValues((current) => ({
-    ...current,
-    [name]: type === "checkbox" ? checked : value,
-  }));
+    setValues((current) => ({
+      ...current,
+      [name]: value,
+    }));
 
-  setError("");
-  setSendHint("");
-  setSendStatus("");
-  setStudySent(false);
-};
-
-  const results = useMemo(() => {
-    const price = numberValue(values.price);
-    const fees = numberValue(values.fees);
-    const work = numberValue(values.workcost);
-    const equity = numberValue(values.contribution);
-    const total = price + fees + work;
-    const loan = Math.max(0, total - equity);
-    const annualRate = numberValue(values.rate) / 100;
-    const months = numberValue(values.years) * 12;
-    const monthlyRate = annualRate / 12;
-    const monthlyLoan = loan === 0
-      ? 0
-      : monthlyRate === 0
-        ? loan / months
-        : loan * monthlyRate / (1 - Math.pow(1 + monthlyRate, -months));
-    const insurance = loan * numberValue(values.insurance) / 1200;
-    const monthlyDebt = monthlyLoan + insurance;
-    const rent = numberValue(values.rent);
-    const vacancy = numberValue(values.vacancy);
-    const collected = rent * (12 - vacancy);
-    const costs = numberValue(values.tax)
-      + numberValue(values.copro)
-      + numberValue(values.other)
-      + collected * numberValue(values.manage) / 100;
-    const annualNet = collected - costs;
-    const monthlyCash = annualNet / 12 - monthlyDebt;
-    const gross = total > 0 ? rent * 12 / total * 100 : 0;
-    const net = total > 0 ? annualNet / total * 100 : 0;
-
-    const schemes = [];
-    if (values.rental !== "bare") {
-      schemes.push([
-        "LMNP",
-        "À étudier si vous envisagez une location meublée, sous réserve des conditions de qualification et du régime fiscal applicable.",
-      ]);
-    }
-    if (values.property !== "new" && values.works !== "no") {
-      schemes.push([
-        "Déficit foncier",
-        "À examiner en cas de location nue au régime réel avec charges et travaux fiscalement déductibles.",
-      ]);
-      schemes.push([
-        "Denormandie",
-        "Possible uniquement pour certains logements anciens rénovés dans des communes éligibles, sous conditions de travaux, location et plafonds.",
-      ]);
-    }
-    if (values.rental !== "furnished") {
-      schemes.push([
-        "Loc’Avantages",
-        "À envisager si vous acceptez un loyer plafonné, des conditions de ressources et un conventionnement avec l’Anah.",
-      ]);
-    }
-    if (values.rental !== "furnished" && (values.property !== "old" || values.works !== "no")) {
-      schemes.push([
-        "Dispositif Jeanbrun / Relance logement",
-        "À vérifier selon la nature du logement, les éventuels travaux, les engagements de location et les critères légaux en vigueur.",
-      ]);
-    }
-    if (!schemes.length) {
-      schemes.push(["Étude sur mesure", "Votre projet nécessite une analyse approfondie des régimes possibles."]);
-    }
-
-    const metrics = [
-      ["Coût global", formatEuro(total)],
-      ["Emprunt estimé", formatEuro(loan)],
-      ["Mensualité avec assurance", formatEuro(monthlyDebt)],
-      ["Rendement brut", formatPercent(gross)],
-      ["Rendement net de charges*", formatPercent(net)],
-      ["Cash-flow mensuel avant impôts", formatEuro(monthlyCash)],
-    ];
-
-    return {
-      total, loan, monthlyDebt, monthlyCash, gross, net, vacancy, schemes, metrics,
-      annualNet,
-    };
-  }, [values]);
-
-  const validateStep = () => {
-    const numericByStep = {
-      1: ["price", "contribution", "fees", "workcost", "rate", "insurance"],
-      2: ["rent", "vacancy", "tax", "copro", "manage", "other"],
-    };
-    for (const name of numericByStep[step] || []) {
-      const value = numberValue(values[name]);
-      if (values[name] === "" || !Number.isFinite(value)) {
-        setError("Vérifiez les montants saisis avant de continuer.");
-        return false;
-      }
-    }
-
-    if (step === 1) {
-      const price = numberValue(values.price);
-      const contribution = numberValue(values.contribution);
-      const fees = numberValue(values.fees);
-      const works = numberValue(values.workcost);
-      if (price < 10000 || contribution < 0 || fees < 0 || works < 0
-        || numberValue(values.rate) < 0 || numberValue(values.rate) > 30
-        || numberValue(values.insurance) < 0 || numberValue(values.insurance) > 10) {
-        setError("Vérifiez les montants et taux saisis avant de continuer.");
-        return false;
-      }
-      if (contribution > price + fees + works) {
-        setError("L’apport dépasse le coût total du projet.");
-        return false;
-      }
-    }
-
-    if (step === 2) {
-      if (numberValue(values.rent) < 0 || numberValue(values.vacancy) < 0
-        || numberValue(values.vacancy) > 12 || numberValue(values.tax) < 0
-        || numberValue(values.copro) < 0 || numberValue(values.manage) < 0
-        || numberValue(values.manage) > 100 || numberValue(values.other) < 0) {
-        setError("Vérifiez les charges et hypothèses locatives saisies.");
-        return false;
-      }
-    }
-
-    if (step === 4 && values.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-      setError("Vérifiez le format de votre adresse e-mail.");
-      return false;
-    }
-    if (step === 4 && values.contactConsent && !values.email.trim()) {
-      setError("Indiquez une adresse e-mail pour transmettre votre étude.");
-      return false;
-    }
     setError("");
-    return true;
+    setMessage("");
   };
 
-  const calculate = () => {
-    setResultsVisible(true);
-    setSendHint("");
-    setSendStatus("");
-    window.setTimeout(() => {
-      document.getElementById("etude-results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 0);
-  };
+  // ENVOI DU FORMULAIRE ET IMPRESSION
+  const handleSubmit = async (event, shouldPrint = false) => {
+    event?.preventDefault();
 
- const nextStep = () => {
-  if (!validateStep()) return;
+    if (loading) return;
 
-  if (step < 4) {
-    pendingScrollY.current = window.scrollY;
-    setStep((current) => current + 1);
-  } else {
-    calculate();
-  }
-};
+    // 0. Validation native (tous les champs requis), y compris pour le bouton « Imprimer »
+    if (formRef.current && !formRef.current.reportValidity()) return;
 
-const previousStep = () => {
-  if (step > 0) {
-    pendingScrollY.current = window.scrollY;
-    setStep((current) => current - 1);
     setError("");
-  }
-};
+    setMessage("");
 
+    // 1. Vérification des coordonnées
+    const name = values.name.trim();
+    const surname = values.surname.trim();
+    const email = values.email.trim();
+    const tel = values.tel.trim();
 
-
-  const sendStudy = async () => {
-    if (loading) return false;
-
-    if (!values.contactConsent) {
-      setSendHint("Pour transmettre votre étude, cochez d’abord la case de demande de contact à l’étape 5.");
-      return false;
-    }
-    if (!values.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
-      setSendHint("Renseignez une adresse e-mail valide à l’étape 5.");
-      return false;
+    if (!name || !surname || !email || !tel) {
+      setError(
+        "Veuillez renseigner votre prénom, votre nom, votre adresse e-mail et votre numéro de téléphone."
+      );
+      return;
     }
 
+    // 2. Vérification de l'adresse e-mail
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      setError("Veuillez renseigner une adresse e-mail valide.");
+      return;
+    }
+
+    // 3. Vérification du téléphone
+    if (!/^[+()\d\s.-]{6,25}$/.test(tel) || tel.replace(/\D/g, "").length < 6) {
+      setError("Veuillez renseigner un numéro de téléphone valide.");
+      return;
+    }
+
+    // 4. Vérification des calculs
+    const calculated = calculateProject(values);
+
+    if (!calculated.valid) {
+      setError("Veuillez vérifier les montants et les taux saisis.");
+      return;
+    }
+
+    // 5. Préparation de l'envoi
     setLoading(true);
-    setSendHint("");
-    setSendStatus("");
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4050";
+
       const response = await fetch(
-        `${apiUrl.replace(/\/$/, "")}/api/etude-personnalisee`,
+        `${apiUrl.replace(/\/$/, "")}/api/investissement-locatif`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            name: values.firstName.trim() || "Client",
-email: values.email.trim(),
-tel: values.tel.trim(),
-city: values.location.trim(),
-contactConsent: values.contactConsent,
-            projectType: `${GOALS[values.goal]} — ${PROPERTY_LABELS[values.property]}`,
-            loan: results.loan,
-            ptz: 0,
-            budget: results.total,
-            financingNeeded: results.loan,
-            monthlyPayment: results.monthlyDebt,
-            studyType: "Étude personnalisée",
-            rental: RENTAL_LABELS[values.rental],
-            works: WORK_LABELS[values.works],
-            rent: numberValue(values.rent),
-            vacancy: numberValue(values.vacancy),
-            grossYield: results.gross,
-            netYield: results.net,
-            monthlyCashFlow: results.monthlyCash,
-            taxBracket: values.bracket,
-            alreadyLandlord: values.existing,
-            schemes: results.schemes,
-            summary: buildSummary(),
+            simulatorType: "investissement",
+
+            // Coordonnées
+            name,
+            surname,
+            email,
+            tel,
+
+            city: "",
+            projectType: "Investissement locatif",
+
+            // Profil
+            income: calculated.income,
+            debts: calculated.debts,
+            tmi: values.tmi,
+            goal: values.goal,
+
+            // Projet immobilier
+            propertyType: values.type,
+            rentalMode: values.furnished,
+
+            price: calculated.price,
+            rent: calculated.rent,
+            deposit: calculated.deposit,
+            years: calculated.years,
+            rate: calculated.rate,
+            insurance: calculated.insurance,
+            fees: calculated.fees,
+            works: calculated.works,
+            charges: calculated.charges,
+            propertyTax: calculated.propertytax,
+
+            // Financement
+            budget: calculated.total,
+            loan: calculated.loan,
+            financingNeeded: calculated.loan,
+            monthlyPayment: calculated.monthlyPayment,
+
+            // Rentabilité
+            grossYield: calculated.grossYield,
+            netRent: calculated.netRent,
+            cashFlow: calculated.cashFlow,
+            debtRatio: calculated.debtRatio,
+
+            // Conseils et avertissements
+            advice: getAdvice(values, calculated),
+            warnings: getWarnings(values, calculated),
           }),
         }
       );
 
       const data = await response.json().catch(() => ({}));
-      if (!response.ok || data.status !== "Message Sent") {
-        throw new Error(data.message || "L’envoi de votre étude a échoué.");
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Une erreur est survenue lors de l'envoi."
+        );
       }
 
-      setStudySent(true);
-      setSendStatus("success");
-      setSendHint("Votre étude a été envoyée avec succès à GOLD’N PATRIMOINE.");
-      return true;
+      // 6. Confirmation de l'envoi
+      setMessage("Votre demande a bien été envoyée. Merci !");
+
+      // 7. Impression uniquement après confirmation
+      if (shouldPrint) {
+        window.print();
+      } else {
+        document.getElementById("investment-results")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
     } catch (err) {
-      setSendStatus("error");
-      setSendHint(err instanceof Error ? err.message : "Impossible d’envoyer l’étude. Réessayez ultérieurement.");
-      return false;
+      setError(
+        err.message === "Failed to fetch"
+          ? "Impossible de contacter le serveur. Veuillez réessayer."
+          : err.message || "Impossible d'envoyer votre demande. Veuillez réessayer."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const buildSummary = () => [
-    "Étude GOLD’N PATRIMOINE",
-    `Objectif : ${GOALS[values.goal]}`,
-    `Bien : ${PROPERTY_LABELS[values.property]}`,
-    `Location : ${RENTAL_LABELS[values.rental]}`,
-    `Travaux : ${WORK_LABELS[values.works]}`,
-    `Prix d’achat : ${formatEuro(numberValue(values.price))}`,
-    `Apport : ${formatEuro(numberValue(values.contribution))}`,
-    `Frais : ${formatEuro(numberValue(values.fees))}`,
-    `Travaux : ${formatEuro(numberValue(values.workcost))}`,
-    `Taux du crédit : ${values.rate} %`,
-    `Durée : ${values.years} ans`,
-    `Assurance : ${values.insurance} %`,
-    `Loyer mensuel : ${formatEuro(numberValue(values.rent))}`,
-    `Vacance locative : ${values.vacancy} mois/an`,
-    `Taxe foncière : ${formatEuro(numberValue(values.tax))}`,
-    `Charges non récupérables : ${formatEuro(numberValue(values.copro))}`,
-    `Gestion locative : ${values.manage} %`,
-    `Autres dépenses : ${formatEuro(numberValue(values.other))}`,
-    `Tranche d’imposition : ${values.bracket === "unknown" ? "Inconnue" : `${values.bracket} %`}`,
-    `Déjà propriétaire bailleur : ${values.existing === "yes" ? "Oui" : "Non"}`,
-    `Secteur recherché : ${values.location.trim() || "Non précisé"}`,
-    "",
-    ...results.metrics.map(([label, value]) => `${label} : ${value}`),
-    "",
-    "Dispositifs à approfondir :",
-    ...results.schemes.map(([name, description]) => `- ${name} : ${description}`),
-    "",
-    "Étude indicative sans garantie de résultat.",
-  ].join("\n");
-
-  const handlePrint = async () => {
-    const sent = studySent || await sendStudy();
-    if (!sent) return;
-    window.print();
-  };
-
   return (
-    <div className="etude-personnalisee">
-      
+    <main className="investment-simulator">
+      <div className="investment-wrap">
+        <div className="investment-layout">
+          {/* FORMULAIRE */}
+          <form
+            ref={formRef}
+            className="investment-card investment-form"
+            onSubmit={(event) => handleSubmit(event, false)}
+          >
+            <h2>Votre profil</h2>
 
-     
+            <div className="investment-two">
+              <InputField
+                label="Revenus nets mensuels du foyer (€)"
+                name="income"
+                values={values}
+                onChange={updateValue}
+                min="0"
+              />
 
-      <main className="etude-wrap etude-main">
-        <div>
-          <div className="etude-panel" id="etude-form">
-            <div className="etude-eyebrow">Étape {step + 1} sur 5</div>
-            <div className="etude-progress" aria-label={`Progression : ${(step + 1) * 20} %`}>
-              <span style={{ width: `${(step + 1) * 20}%` }} />
+              <InputField
+                label="Crédits mensuels existants (€)"
+                name="debts"
+                values={values}
+                onChange={updateValue}
+                min="0"
+              />
             </div>
 
-            {step === 0 && (
-              <section className="etude-step">
-                <h2>Votre projet</h2>
-                <p className="etude-hint">Commençons par votre objectif et le type de logement envisagé.</p>
-                <div className="etude-fields">
-                  <SelectField wide label="Votre objectif principal" name="goal" values={values} onChange={updateValue} options={[
-                    ["income", "Générer des revenus complémentaires"],
-                    ["tax", "Étudier les avantages fiscaux"],
-                    ["wealth", "Constituer un patrimoine"],
-                    ["retirement", "Préparer ma retraite"],
-                  ]} />
-                  <SelectField label="Type de bien" name="property" values={values} onChange={updateValue} options={[
-                    ["new", "Immobilier neuf"], ["old", "Immobilier ancien"], ["either", "Je suis ouvert aux deux"],
-                  ]} />
-                  <SelectField label="Location envisagée" name="rental" values={values} onChange={updateValue} options={[
-                    ["unknown", "Je ne sais pas encore"], ["furnished", "Meublée"], ["bare", "Non meublée"],
-                  ]} />
-                  <SelectField wide label="Travaux envisagés" name="works" values={values} onChange={updateValue} options={[
-                    ["no", "Non"], ["yes", "Oui"], ["unknown", "À déterminer"],
-                  ]} />
-                </div>
-              </section>
-            )}
+            <div className="investment-two">
+              <InputField
+                label="Tranche marginale d’imposition"
+                name="tmi"
+                values={values}
+                onChange={updateValue}
+              >
+                <select
+                  id="tmi"
+                  name="tmi"
+                  value={values.tmi}
+                  onChange={updateValue}
+                  required
+                >
+                  <option value="unknown">Je ne sais pas</option>
+                  <option value="0">0 %</option>
+                  <option value="11">11 %</option>
+                  <option value="30">30 %</option>
+                  <option value="41">41 %</option>
+                  <option value="45">45 %</option>
+                </select>
+              </InputField>
 
-            {step === 1 && (
-              <section className="etude-step">
-                <h2>Votre budget</h2>
-                <p className="etude-hint">Nous calculons un financement théorique à partir de vos hypothèses.</p>
-                <div className="etude-fields">
-                  <Field label="Prix d’achat (€)" name="price" values={values} onChange={updateValue} type="number" min="10000" required />
-                  <Field label="Apport personnel (€)" name="contribution" values={values} onChange={updateValue} type="number" min="0" required />
-                  <Field label="Frais d’acquisition et annexes (€)" name="fees" values={values} onChange={updateValue} type="number" min="0" required />
-                  <Field label="Budget travaux (€)" name="workcost" values={values} onChange={updateValue} type="number" min="0" required />
-                  <Field label="Taux du crédit annuel (%)" name="rate" values={values} onChange={updateValue} type="number" min="0" max="30" step="0.05" required />
-                  <SelectField label="Durée du crédit (années)" name="years" values={values} onChange={updateValue} options={[["15", "15 ans"], ["20", "20 ans"], ["25", "25 ans"]]} />
-                  <Field wide label="Assurance emprunteur annuelle (% du capital initial)" name="insurance" values={values} onChange={updateValue} type="number" min="0" max="10" step="0.05" required />
-                </div>
-              </section>
-            )}
+              <InputField
+                label="Votre objectif prioritaire"
+                name="goal"
+                values={values}
+                onChange={updateValue}
+              >
+                <select
+                  id="goal"
+                  name="goal"
+                  value={values.goal}
+                  onChange={updateValue}
+                  required
+                >
+                  <option value="income">Générer des revenus locatifs</option>
+                  <option value="tax">Optimiser ma fiscalité</option>
+                  <option value="wealth">Construire mon patrimoine</option>
+                  <option value="effort">Limiter mon effort d’épargne</option>
+                </select>
+              </InputField>
+            </div>
 
-            {step === 2 && (
-              <section className="etude-step">
-                <h2>Votre prévision locative</h2>
-                <p className="etude-hint">Pour une estimation plus réaliste, indiquez vos charges annuelles.</p>
-                <div className="etude-fields">
-                  <Field label="Loyer mensuel hors charges (€)" name="rent" values={values} onChange={updateValue} type="number" min="0" required />
-                  <Field label="Vacance locative (mois/an)" name="vacancy" values={values} onChange={updateValue} type="number" min="0" max="12" step="0.5" required />
-                  <Field label="Taxe foncière annuelle (€)" name="tax" values={values} onChange={updateValue} type="number" min="0" required />
-                  <Field label="Charges non récupérables annuelles (€)" name="copro" values={values} onChange={updateValue} type="number" min="0" required />
-                  <Field label="Gestion locative (% des loyers encaissés)" name="manage" values={values} onChange={updateValue} type="number" min="0" max="100" step="0.5" required />
-                  <Field label="Autres dépenses annuelles (€)" name="other" values={values} onChange={updateValue} type="number" min="0" required />
-                </div>
-              </section>
-            )}
+            {/* VOTRE PROJET */}
+            <div className="investment-section">
+              <h2>Votre projet</h2>
 
-            {step === 3 && (
-              <section className="etude-step">
-                <h2>Votre profil fiscal</h2>
-                <p className="etude-hint">Ces informations servent à orienter les dispositifs, pas à calculer un impôt personnalisé.</p>
-                <div className="etude-fields">
-                  <SelectField label="Tranche marginale d’imposition" name="bracket" values={values} onChange={updateValue} options={[
-                    ["unknown", "Je ne sais pas"], ["0", "0 %"], ["11", "11 %"], ["30", "30 %"], ["41", "41 %"], ["45", "45 %"],
-                  ]} />
-                  <SelectField label="Déjà propriétaire bailleur ?" name="existing" values={values} onChange={updateValue} options={[
-                    ["no", "Non"], ["yes", "Oui"],
-                  ]} />
-                  <Field
-  wide
-  label="Ville ou secteur recherché (facultatif)"
-  name="location"
-  values={values}
-  onChange={updateValue}
-  maxLength={100}
-  hint="Ex. : Lyon, Île-de-France…"
-/>
-                </div>
-              </section>
-            )}
+              <div className="investment-two">
+                <InputField
+                  label="Prix du bien (€)"
+                  name="price"
+                  values={values}
+                  onChange={updateValue}
+                  min="1"
+                />
 
-            {step === 4 && (
-              <section className="etude-step">
-                <h2>Votre étude est presque prête</h2>
-                <p className="etude-hint">L’analyse s’affichera immédiatement. Vous pourrez l’imprimer ou demander un accompagnement.</p>
-                <div className="etude-fields">
-                  <Field label="Nom et prénom" name="firstName" values={values} onChange={updateValue} hint="Votre nom et prénom" />
-                 <Field
-  label="Numéro de téléphone"
-  name="tel"
-  values={values}
-  onChange={updateValue}
-  type="tel"
-  placeholder="06 12 34 56 78"
-  hint="Votre numéro de téléphone"
-/>
-                  <Field label="Adresse e-mail" name="email" values={values} onChange={updateValue} type="email" hint="vous@exemple.fr" />
-                  <div className="etude-field etude-field--wide">
-                    <label className="etude-consent">
-                      <input required name="contactConsent" type="checkbox" checked={values.contactConsent} onChange={updateValue} />
-                      <span>Je souhaite transmettre mon étude à GOLD’N PATRIMOINE pour être recontacté(e).</span>
-                    </label>
-                    <span className="etude-small">Votre étude sera transmise uniquement après votre demande explicite et si vous avez renseigné une adresse e-mail valide.</span>
+                <InputField
+                  label="Loyer mensuel envisagé (€)"
+                  name="rent"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                />
+              </div>
+
+              <div className="investment-two">
+                <InputField
+                  label="Apport personnel (€)"
+                  name="deposit"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                />
+
+                <InputField
+                  label="Durée du prêt"
+                  name="years"
+                  values={values}
+                  onChange={updateValue}
+                >
+                  <select
+                    id="years"
+                    name="years"
+                    value={values.years}
+                    onChange={updateValue}
+                    required
+                  >
+                    <option value="15">15 ans</option>
+                    <option value="20">20 ans</option>
+                    <option value="25">25 ans</option>
+                  </select>
+                </InputField>
+              </div>
+
+              <div className="investment-two">
+                <InputField
+                  label="Taux d’intérêt annuel (%)"
+                  name="rate"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                  max="20"
+                  step="0.1"
+                />
+
+                <InputField
+                  label="Assurance emprunteur annuelle (%)"
+                  name="insurance"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                  max="5"
+                  step="0.05"
+                />
+              </div>
+
+              <div className="investment-two">
+                <InputField
+                  label="Type de bien"
+                  name="type"
+                  values={values}
+                  onChange={updateValue}
+                >
+                  <select
+                    id="type"
+                    name="type"
+                    value={values.type}
+                    onChange={updateValue}
+                    required
+                  >
+                    <option value="new">Neuf / VEFA</option>
+                    <option value="old">Ancien sans travaux</option>
+                    <option value="works">Ancien avec travaux</option>
+                  </select>
+                </InputField>
+
+                <InputField
+                  label="Mode de location envisagé"
+                  name="furnished"
+                  values={values}
+                  onChange={updateValue}
+                >
+                  <select
+                    id="furnished"
+                    name="furnished"
+                    value={values.furnished}
+                    onChange={updateValue}
+                    required
+                  >
+                    <option value="either">À déterminer</option>
+                    <option value="furnished">Meublée</option>
+                    <option value="bare">Nue</option>
+                  </select>
+                </InputField>
+              </div>
+
+              <div className="investment-two">
+                <InputField
+                  label="Frais d’acquisition estimés (€)"
+                  name="fees"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                />
+
+                <InputField
+                  label="Travaux / ameublement (€)"
+                  name="works"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                />
+              </div>
+
+              <div className="investment-two">
+                <InputField
+                  label="Charges non récupérables + entretien (€/mois)"
+                  name="charges"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                />
+
+                <InputField
+                  label="Taxe foncière hors TEOM (€/an)"
+                  name="propertytax"
+                  values={values}
+                  onChange={updateValue}
+                  min="0"
+                />
+              </div>
+
+              <p className="investment-muted">
+                Si vous ne connaissez pas les charges ou la taxe foncière,
+                conservez les montants indicatifs et faites-les confirmer avant
+                toute décision.
+              </p>
+            </div>
+
+            {/* COORDONNÉES */}
+            <div className="investment-section">
+              <h2>Vos coordonnées</h2>
+
+              <div className="investment-two">
+                <InputField
+                  label="Prénom"
+                  name="name"
+                  values={values}
+                  onChange={updateValue}
+                  type="text"
+                  autoComplete="given-name"
+                  required
+                />
+
+                <InputField
+                  label="Nom"
+                  name="surname"
+                  values={values}
+                  onChange={updateValue}
+                  type="text"
+                  autoComplete="family-name"
+                  required
+                />
+              </div>
+
+              <div className="investment-two">
+                <InputField
+                  label="Adresse e-mail"
+                  name="email"
+                  values={values}
+                  onChange={updateValue}
+                  type="email"
+                  autoComplete="email"
+                  required
+                />
+
+                <InputField
+                  label="Numéro de téléphone"
+                  name="tel"
+                  values={values}
+                  onChange={updateValue}
+                  type="tel"
+                  autoComplete="tel"
+                  required
+                />
+              </div>
+
+              {/* BOUTON CALCULER ET ENVOYER */}
+              <button
+                className="investment-btn"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Envoi en cours..." : "Calculer et obtenir mon conseil"}
+              </button>
+
+              {message && (
+                <p className="investment-success" role="status">
+                  {message}
+                </p>
+              )}
+
+              {error && (
+                <p className="investment-error" role="alert">
+                  {error}
+                </p>
+              )}
+            </div>
+          </form>
+
+          {/* RÉSULTATS */}
+          <section
+            className="investment-card investment-results"
+            id="investment-results"
+          >
+            <div className="investment-eyebrow">Votre étude indicative</div>
+
+            <h2>Votre projet en un coup d’œil</h2>
+
+            {!results.valid ? (
+              <p className="investment-error">
+                Vérifiez les montants et les taux pour afficher les résultats.
+              </p>
+            ) : (
+              <>
+                <div className="investment-result">
+                  <div className="investment-muted">
+                    Effort d’épargne mensuel avant fiscalité
+                  </div>
+
+                  <div className="investment-big">
+                    {results.cashFlow >= 0 ? "+" : "-"}
+                    {euro(Math.abs(results.cashFlow))}/mois
+                  </div>
+
+                  <div className="investment-muted">
+                    {results.cashFlow >= 0
+                      ? "Excédent de trésorerie estimé avant impôt"
+                      : "Montant à compléter chaque mois, avant impôt"}
                   </div>
                 </div>
-              </section>
-            )}
 
-            {error && <p className="etude-error" role="alert">{error}</p>}
+                <div className="investment-metrics">
+                  <div className="investment-metric">
+                    <span>Mensualité de crédit, assurance incluse</span>
+                    <strong>{euro(results.monthlyPayment)}/mois</strong>
+                  </div>
 
-            <div className="etude-actions">
-              <button className="etude-btn etude-btn--alt" type="button" onClick={previousStep} disabled={step === 0}>
-                ← Précédent
-              </button>
-              <button className="etude-btn" type="button" onClick={nextStep}>
-                {step === 4 ? "Voir mon étude →" : "Continuer →"}
-              </button>
-            </div>
-          </div>
+                  <div className="investment-metric">
+                    <span>Rendement locatif brut sur coût total</span>
+                    <strong>{percent(results.grossYield)}</strong>
+                  </div>
 
-          {resultsVisible && (
-            <section className="etude-results" id="etude-results" aria-live="polite">
-              <div className="etude-eyebrow">GOLD’N PATRIMOINE • Étude indicative</div>
-              <h2>{values.firstName.trim() ? `Votre étude, ${values.firstName.trim()}` : "Votre étude personnalisée"}</h2>
-              <div className="etude-metrics">
-                {results.metrics.map(([label, value]) => (
-                  <div className="etude-metric" key={label}>
-                    <strong>{value}</strong>
-                    <span>{label}</span>
+                  <div className="investment-metric">
+                    <span>
+                      Revenu locatif net avant financement et impôt / mois
+                    </span>
+                    <strong>{euro(results.netRent)}/mois</strong>
+                  </div>
+
+                  <div className="investment-metric">
+                    <span>
+                      Ratio de crédits / revenus, hors prise en compte bancaire
+                      des loyers
+                    </span>
+                    <strong>
+                      {results.debtRatio === null
+                        ? "Non calculable"
+                        : percent(results.debtRatio, 1)}
+                    </strong>
+                  </div>
+                </div>
+
+                <h3>Stratégies à explorer</h3>
+
+                {advice.map((item) => (
+                  <div className="investment-advice" key={item.title}>
+                    <strong>{item.title}</strong>
+                    <p>{item.description}</p>
                   </div>
                 ))}
-              </div>
-              <p className="etude-small etude-result-note">
-                * Rendement net calculé avant fiscalité et financement. Hypothèse de {values.vacancy} mois de vacance locative par an. Cash-flow avant impôts, sans provision spécifique pour gros travaux, frais exceptionnels ou revente.
-              </p>
-              <h3>Dispositifs à approfondir</h3>
-              {results.schemes.map(([name, description]) => (
-                <div className="etude-recommendation" key={name}>
-                  <h3>{name}</h3>
-                  <p>{description}</p>
-                </div>
-              ))}
-              <p className="etude-small">
-                Cette présélection ne confirme aucune éligibilité ni économie d’impôt. Une vérification de la localisation, du bien, des plafonds, des travaux et de votre situation fiscale est indispensable.
-              </p>
-              <p className="etude-disclaimer">
-                Simulation indicative, non contractuelle, hors fiscalité et sans garantie de rentabilité. Les loyers, charges, conditions de financement et dispositifs fiscaux doivent être confirmés. Cette étude n’est pas un conseil fiscal, juridique ou financier personnalisé.
-              </p>
-              <div className="etude-actions etude-print-hide">
-                <button className="etude-btn etude-btn--alt" type="button" onClick={handlePrint} disabled={loading}>
-                  {loading ? "Envoi en cours…" : "Imprimer / Enregistrer en PDF"}
-                </button>
-                <button className="etude-btn" type="button" onClick={sendStudy} disabled={loading || studySent}>
-                  {loading ? "Envoi en cours…" : studySent ? "Étude transmise ✓" : "Transmettre mon étude →"}
-                </button>
-              </div>
-              {sendHint && <p className={`etude-send-hint etude-send-hint--${sendStatus || "info"}`} role="status" aria-live="polite">{sendHint}</p>}
-            </section>
-          )}
-        </div>
 
-        <aside className="etude-aside">
-          <div className="etude-eyebrow">Notre accompagnement</div>
-          <h3>Une étude claire, à votre rythme</h3>
-          <p>Nous examinons les grands équilibres de votre projet :</p>
-          <ul>
-            <li>Budget global et financement</li>
-            <li>Rentabilité brute et nette de charges</li>
-            <li>Effort d’épargne mensuel</li>
-            <li>Dispositifs immobiliers à approfondir</li>
-          </ul>
-          <p className="etude-small">Les calculs sont effectués dans votre navigateur. Les données sont transmises uniquement si vous demandez explicitement l’envoi de votre étude.</p>
-        </aside>
-      </main>
-    </div>
+                <h3>Points de vigilance</h3>
+
+                <ul className="investment-warnings">
+                  {warnings.map((warning) => (
+                    <li key={warning}>{warning}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            <div className="investment-foot">
+              Simulation pédagogique, non contractuelle. Rendement brut calculé
+              sur prix + frais + travaux. Vacance locative conventionnelle de
+              5 % du loyer. Le cash-flow est calculé avant impôt, sans
+              valorisation du capital remboursé. Les critères bancaires réels,
+              la fiscalité (micro/réel, amortissements, prélèvements sociaux),
+              les éventuelles contraintes de location et les travaux futurs
+              doivent être étudiés séparément. La TMI seule ne permet pas de
+              calculer l’impôt sur les loyers. Aucune économie fiscale n’est
+              garantie.
+            </div>
+
+            {/* BOUTON IMPRIMER / PDF */}
+            <button
+              className="investment-btn investment-btn--print"
+              type="button"
+              onClick={(event) => handleSubmit(event, true)}
+              disabled={loading}
+            >
+              {loading ? "Envoi en cours..." : "Envoyer et Imprimer / Enregistrer en PDF"}
+            </button>
+          </section>
+        </div>
+      </div>
+    </main>
   );
 }

@@ -1,4 +1,5 @@
 
+import CookieConsent from "@/components/Layout/CookieConsent/CookieConsent";
 import "../app/settings/styles/globals.scss";
 
 export const metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr">
       <body>{children}</body>
+      <CookieConsent/>
     </html>
   );
 }

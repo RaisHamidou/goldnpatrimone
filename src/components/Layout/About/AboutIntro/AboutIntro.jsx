@@ -1,6 +1,9 @@
-
+"use client"
+import ContactPopup from "@/components/ContactPopup/ContactPopup";
+import react, {useState} from 'react'
 
 export default function AboutIntro() {
+const [isOpen, setIsopen] = useState(false)
   return (
     <section className="about-intro" id="notre-histoire">
       <div className="container-about about-intro__grid">
@@ -41,9 +44,10 @@ export default function AboutIntro() {
             service de vos décisions.
           </p>
 
-          <a href="/contact" className="btn btn-outline">
+          <a onClick={()=> setIsopen(true)} className="btn btn-outline">
             Échangeons sur votre projet <span aria-hidden="true">→</span>
           </a>
+          <ContactPopup isOpen={isOpen} setIsOpen={setIsopen}/>
         </div>
       </div>
     </section>

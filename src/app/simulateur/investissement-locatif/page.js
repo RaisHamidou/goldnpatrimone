@@ -7,6 +7,26 @@ import OfferPage from '@/components/Layout/OfferPage/OfferPage'
 import SimulateurImmobilier from '@/components/Layout/SimulateurImmobilier/SimulateurImmobilier'
 import React from 'react'
 
+export const metadata = {
+  title: "Simulateur investissement locatif",
+  description: "Accompagnement immobilier personnalisé pour acheter, vendre ou investir.",
+  openGraph: {
+  title: "Gold'N Patrimoine | Simulateur investissement locatif",
+  description: "Accompagnement immobilier personnalisé pour acheter, vendre ou investir.",
+  url: "https://goldnpatrimoine.com",
+  siteName: "Gold'N Patrimoine",
+  type: "website",
+  images: [
+    {
+      url: "https://goldnpatrimoine.com/og-image.jpg",
+      width: 1200,
+      height: 630,
+      alt: "Gold'N Patrimoine",
+    },
+  ],
+},
+};
+
 export default function page() {
   return (
     <div>
