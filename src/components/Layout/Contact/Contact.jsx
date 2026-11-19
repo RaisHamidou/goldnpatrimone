@@ -41,7 +41,8 @@ export default function ContactSection() {
     setStatus({ type: null, text: "" });
 
     try {
-      const response = await fetch("http://localhost:4050/api/contact", {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4050";
+      const response = await fetch(  `${apiUrl.replace(/\/$/, "")}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
