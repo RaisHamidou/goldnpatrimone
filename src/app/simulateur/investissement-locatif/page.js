@@ -34,7 +34,8 @@ export default function page() {
               <header className="sim-header">
           <div className="sim-brand">GOLD'N PATRIMOINE · Simulateur immobilier</div>
           <h1>Construisons votre stratégie d’investissement</h1>
-          <p>En quelques étapes, obtenez une première analyse de votre financement, de vos revenus locatifs et des dispositifs à étudier selon votre projet.</p>
+          <p>En quelques étapes, obtenez une première analyse de votre financement, de vos revenus locatifs et 
+          des dispositifs à étudier selon votre projet</p>
         </header> 
             </Hero>
          <EtudePersonnalisee/>

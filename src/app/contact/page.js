@@ -27,7 +27,7 @@ export default function page() {
     <div>
       <Hero>
          <h1>Contactez Nous</h1>
-      <p>Découvrez une sélection de logements neufs et de biens soigneusement choisis pour répondre à tous vos projets.</p>
+      <p>Découvrez une sélection de logements neufs et de biens soigneusement choisis pour répondre à tous vos projets</p>
       
     <div className="container-buttons">
       <CTA variant="filled"> 

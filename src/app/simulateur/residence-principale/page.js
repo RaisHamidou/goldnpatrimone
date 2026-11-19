@@ -33,7 +33,8 @@ export default function page() {
               <header className="sim-header">
           <div className="sim-brand">GOLD'N PATRIMOINE · Simulateur immobilier</div>
           <h1>Construisons votre avenir immobilier.</h1>
-          <p>Estimez votre capacité d’emprunt, votre budget d’achat et votre éventuel prêt à taux zéro. Une première vision claire pour préparer votre projet dans le neuf.</p>
+          <p>Estimez votre capacité d’emprunt, votre budget d’achat et votre éventuel prêt à taux zéro. 
+          Une première vision claire pour préparer votre projet dans le neuf</p>
         </header>
       
               

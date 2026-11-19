@@ -27,10 +27,10 @@ export default function page() {
     <div>
        <Hero>
              <h1>Construisons votre avenir immobilier</h1>
-            <p>Découvrez une sélection de logements neufs et de biens soigneusement choisis pour répondre à tous vos projets.</p>
+            <p>Découvrez une sélection de logements neufs et de biens soigneusement choisis pour répondre à tous vos projets</p>
             
           <div className="container-buttons">
-            <CTA href={"#decouvrir"} variant="filled"> 
+            <CTA href={"#housing-benefits-section"} variant="filled"> 
             Découvrir les avantages
             </CTA>
             

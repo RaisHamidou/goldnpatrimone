@@ -30,7 +30,8 @@ export default function page() {
        <Hero>
               <h1>Votre projet immobilier mérite toute notre attention.</h1>
               <p>
-               Bien plus qu’une recherche de logement, nous vous proposons un accompagnement humain, des conseils clairs et un large choix d’opportunités immobilières soigneusement sélectionnées.
+               Bien plus qu’une recherche de logement, nous vous proposons un accompagnement humain, des conseils 
+               clairs et un large choix d’opportunités immobilières soigneusement sélectionnées
               </p>
       
               <div className="container-buttons">

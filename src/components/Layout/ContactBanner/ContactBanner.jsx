@@ -12,7 +12,7 @@ export default function ContactBanner() {
           <h2>Et si nous parlions de votre projet ?</h2>
 
           <p>
-            Résidence principale ou investissement locatif* : nous sommes à votre écoute. 
+            Résidence principale ou investissement locatif : nous sommes à votre écoute. 
           </p>
         </div>
 

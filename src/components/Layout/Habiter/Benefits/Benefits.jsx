@@ -68,7 +68,7 @@ const benefits = [
 
 export default function Benefits() {
   return (
-    <section className="housing-benefits-section">
+    <section id="housing-benefits-section">
       <div className="container">
         <div className="benefits-panel">
           <div className="center benefits-heading">

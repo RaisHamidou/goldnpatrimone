@@ -20,7 +20,7 @@ export default function Home() {
         <h1>Construisons votre projet de vie ensemble !</h1>
         <p>
           Votre projet, notre expertise ! Chez GOLD’N PATRIMOINE 
-          nous proposons des biens soigneusement sélectionnés aux meilleurs prix, avec un accompagnement clé en main.
+          nous proposons des biens soigneusement sélectionnés aux meilleurs prix, avec un accompagnement clé en main
         </p>
         <div className="container-buttons">
           <CTA href={"#nos-solutions"} variant="filled">Découvrir</CTA>
