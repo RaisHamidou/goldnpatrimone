@@ -44,11 +44,11 @@ router.post("/contact", async (req, res) => {
       from: process.env.EMAIL,
       replyTo: email,
       to: "m.diaby@goldnpatrimoine.com",
-      subject: `Email du site de la part de ${name} ${surname}`,
+      subject: `Email du site de la part de $ ${surname} {name}`,
       html: `
         <div style="font-family: sans-serif; color: #333;"> 
-          <h1 style="color: #ca9e57;">Information sur le client</h1>
-          <h2>${name} ${surname}</h2>
+          <h1 style="color: #ca9e57;">Informations sur le client</h1>
+          <h2> ${surname} ${name}</h2>
           <p><strong>Email :</strong> ${email}</p>
           <p><strong>Tel :</strong> ${tel}</p>
           <p><strong>Code postal :</strong> ${postalCode}</p>
