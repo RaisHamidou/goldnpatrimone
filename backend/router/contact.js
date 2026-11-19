@@ -43,7 +43,7 @@ router.post("/contact", async (req, res) => {
     const mail = {
       from: process.env.EMAIL,
       replyTo: email,
-      to: process.env.CONTACT_EMAIL,
+      to: "m.diaby@goldnpatrimoine.com",
       subject: `Email du site de la part de ${name} ${surname}`,
       html: `
         <div style="font-family: sans-serif; color: #333;"> 
@@ -163,7 +163,7 @@ router.post("/simulateur-immobilier", async (req, res) => {
     }
 
     if (!process.env.EMAIL || !process.env.PASSWORD ||
-        !process.env.CONTACT_EMAIL) {
+        !"m.diaby@goldnpatrimoine.com") {
       console.error("Configuration e-mail incomplète.");
       return res.status(500).json({
         status: "ERROR",
@@ -210,7 +210,7 @@ router.post("/simulateur-immobilier", async (req, res) => {
 
     const mail = {
       from: process.env.EMAIL,
-      to: process.env.CONTACT_EMAIL,
+      to: "m.diaby@goldnpatrimoine.com",
       replyTo: email.trim(),
       subject: `Demande immobilière — ${name.trim()}`,
       text: `
@@ -365,7 +365,7 @@ router.post("/investissement-locatif", async (req, res) => {
     if (
       !process.env.EMAIL ||
       !process.env.PASSWORD ||
-      !process.env.CONTACT_EMAIL
+      !"m.diaby@goldnpatrimoine.com"
     ) {
       console.error("Configuration e-mail incomplète.");
 
@@ -499,7 +499,7 @@ router.post("/investissement-locatif", async (req, res) => {
     // Contenu de l'e-mail
     const mailOptions = {
       from: process.env.EMAIL,
-      to: process.env.CONTACT_EMAIL,
+      to: "m.diaby@goldnpatrimoine.com",
       replyTo: email.trim(),
       subject: `Nouvelle étude personnalisée — ${name.trim()}`,
 
