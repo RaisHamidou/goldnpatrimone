@@ -43,7 +43,7 @@ router.post("/contact", async (req, res) => {
     const mail = {
       from: process.env.EMAIL,
       replyTo: email,
-      to: "contact.dzairhistory@gmail.com",
+      to: process.env.CONTACT_EMAIL,
       subject: `Email du site de la part de ${name} ${surname}`,
       html: `
         <div style="font-family: sans-serif; color: #333;"> 
