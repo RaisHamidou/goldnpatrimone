@@ -8,7 +8,7 @@ $gold-light: rgba(202, 158, 87, 0.08);
 $border-color: #e6dfd5;
 $text-muted: #736b63;
 
-.container {
+#containerContact {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
@@ -39,7 +39,7 @@ $text-muted: #736b63;
   }
 }
 
-.card {
+.card-contact {
   background: $card-bg;
   border-radius: 20px;
   box-shadow: 0 15px 35px rgba(58, 44, 35, 0.05);
@@ -101,9 +101,7 @@ $text-muted: #736b63;
   @media (max-width: 640px) {
     grid-template-columns: 1fr;
   }
-}
-
-.fieldGroup {
+  .fieldGroup {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -148,6 +146,9 @@ $text-muted: #736b63;
     min-height: 110px;
   }
 }
+}
+
+
 
 .submitBtn {
   display: inline-flex;

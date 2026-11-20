@@ -11,7 +11,7 @@ import {
   FiAlertCircle, 
   FiLoader 
 } from "react-icons/fi";
-import styles from "./Contact.module.scss";
+//import styles from "./Contact.scss";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -24,7 +24,7 @@ export default function ContactSection() {
     cityOfSearch: "",
     number0fPieces: "",
     budget: "",
-    message: "",
+    message: "Bonjour,Je souhaite échanger avec votre équipe afin d’obtenir des informations complémentaires sur vos offres et votre accompagnement immobilier.Je vous remercie par avance pour votre attention.Cordialement. ",
   });
 
   const [loading, setLoading] = useState(false);
@@ -87,34 +87,34 @@ export default function ContactSection() {
   };
 
   return (
-    <section className={styles.container}>
+    <section id="containerContact">
       {status.type && (
         <div
-          className={`${styles.toast} ${
-            status.type === "error" ? styles.toastError : ""
+          className={`"toast" ${
+            status.type === "error" ?"toastError" : ""
           }`}
         >
           {status.type === "success" ? (
-            <FiCheckCircle className={styles.toastIcon} />
+            <FiCheckCircle className={"toastIcon"} />
           ) : (
-            <FiAlertCircle className={styles.toastIcon} />
+            <FiAlertCircle className={"toastIcon"} />
           )}
           <span>{status.text}</span>
         </div>
       )}
 
-      <div className={styles.card}>
+      <div className="card-contact">
         {/* Colonne Formulaire */}
-        <div className={styles.formColumn}>
-          <div className={styles.header}>
-            <div className={styles.iconCircle}>
+        <div className={"formColumn"}>
+          <div className="header">
+            <div className={"iconCircle"}>
               <FiMail size={22} />
             </div>
             <h2>Envoyez-nous un message</h2>
           </div>
 
-          <form onSubmit={handleSubmit} className={styles.formGrid}>
-            <div className={styles.fieldGroup}>
+          <form onSubmit={handleSubmit} className="formGrid">
+            <div className="fieldGroup">
               <label htmlFor="name">Nom</label>
               <input
                 type="text"
@@ -127,7 +127,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="surname">Prénom</label>
               <input
                 type="text"
@@ -140,7 +140,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="email">Email</label>
               <input
                 type="email"
@@ -153,7 +153,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="tel">Téléphone</label>
               <input
                 type="tel"
@@ -166,7 +166,7 @@ export default function ContactSection() {
             </div>
 
             {/* Code Postal et Ville de résidence */}
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="postalCode">Code postal</label>
               <input
                 type="text"
@@ -178,7 +178,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="cityOfResidence">Ville de résidence</label>
               <input
                 type="text"
@@ -190,7 +190,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="cityOfSearch">Ville de recherche</label>
               <input
                 type="text"
@@ -202,7 +202,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fieldGroup}>
+            <div className="fieldGroup">
               <label htmlFor="number0fPieces">Nombre de pièces</label>
               <select
                 id="number0fPieces"
@@ -219,7 +219,7 @@ export default function ContactSection() {
               </select>
             </div>
 
-            <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className="fieldGroup fullWidth">
               <label htmlFor="budget">Budget estimé (€)</label>
               <input
                 type="text"
@@ -231,7 +231,7 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+            <div className="fieldGroup fullWidth">
               <label htmlFor="message">Décrivez-nous votre demande</label>
               <textarea
                 id="message"
@@ -244,21 +244,21 @@ export default function ContactSection() {
               />
             </div>
 
-            <div className={styles.fullWidth}>
+            <div className="fullWidth">
               <button
                 type="submit"
-                className={styles.submitBtn}
+                className="submitBtn"
                 disabled={loading}
               >
                 {loading ? (
                   <>
                     <span>Envoi en cours...</span>
-                    <FiLoader className={styles.spinner} />
+                    <FiLoader className="spinner" />
                   </>
                 ) : (
                   <>
                     <span>Envoyer le message</span>
-                    <FiSend className={styles.btnIcon} />
+                    <FiSend className="btnIcon" />
                   </>
                 )}
               </button>
@@ -267,58 +267,58 @@ export default function ContactSection() {
         </div>
 
         {/* Colonne Coordonnées */}
-        <div className={styles.infoColumn}>
-          <div className={styles.header}>
-            <div className={`${styles.iconCircle} ${styles.goldCircle}`}>
+        <div className="infoColumn">
+          <div className="header">
+            <div className="iconCircle goldCircle">
               <FiPhone size={22} />
             </div>
             <h2>Nos coordonnées</h2>
           </div>
 
-          <p className={styles.infoIntro}>
+          <p className="infoIntro">
             Nous sommes à votre entière disposition pour vous accompagner et
             réaliser votre projet en toute sérénité.
           </p>
 
-          <div className={styles.infoCards}>
+          <div className="infoCards">
             <a
-              href="mailto:contact.dzairhistory@gmail.com"
-              className={styles.infoCard}
+              href="mailto:m.diaby@goldnpatrimoine.com"
+              className="infoCard"
             >
-              <div className={styles.cardIcon}>
+              <div className="cardIcon">
                 <FiMail />
               </div>
               <div>
-                <span className={styles.cardLabel}>Email</span>
-                <span className={styles.cardValue}>
+                <span className="cardLabel">Email</span>
+                <span className="cardValue">
                   m.diaby@goldnpatrimoine.com
                 </span>
               </div>
             </a>
 
-            <a href="tel:0620810090" className={styles.infoCard}>
-              <div className={styles.cardIcon}>
+            <a href="tel:0620810090" className="infoCard">
+              <div className="cardIcon">
                 <FiPhone />
               </div>
               <div>
-                <span className={styles.cardLabel}>Téléphone</span>
-                <span className={styles.cardValue}>06 20 81 00 90</span>
+                <span className="cardLabel">Téléphone</span>
+                <span className="cardValue">06 20 81 00 90</span>
               </div>
             </a>
 
-            <div className={styles.infoCard}>
-              <div className={styles.cardIcon}>
+            <div className="infoCard">
+              <div className="cardIcon">
                 <FiMapPin />
               </div>
               <div>
-                <span className={styles.cardLabel}>Zone d'intervention</span>
-                <span className={styles.cardValue}>France</span>
+                <span className="cardLabel">Zone d'intervention</span>
+                <span className="cardValue">France</span>
               </div>
             </div>
           </div>
 
-          <div className={styles.goldBadge}>
-            <FiHome className={styles.badgeIcon} />
+          <div className="goldBadge">
+            <FiHome className="badgeIcon" />
             <div>
               <strong>Un accompagnement clé en main</strong>
               <p>Conseil en gestion de patrimoine & investissement d'exception.</p>

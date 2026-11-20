@@ -138,6 +138,7 @@ header {
 
   .btn-full {
     background-color: $gold;
+    
     font-size: 1.2rem;
     padding: 10px 25px;
     border-radius: 7px;
@@ -145,12 +146,14 @@ header {
     align-items: center;
     position: absolute;
     right: 50px;
-    a {
-      color: $white;
-      position: relative;
-      top: -0.5px;
+     color: white !important;
+     
+     
+      
       font-family: $inter;
-    }
+   /*  a {
+      
+    } */
     @media screen and (max-width: 800px) {
       position: relative;
     }

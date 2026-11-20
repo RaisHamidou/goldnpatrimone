@@ -9,7 +9,7 @@
   --etude-soft: #f1e8d8;
 
     height: 500px;
-background-color: red;
+
  
 position: relative;
 
@@ -19,6 +19,8 @@ position: relative;
     font-family: "Playfair Display", serif;
     font-weight: 500;
     line-height: 1.18;
+   
+    
   }
 
   a {
@@ -29,16 +31,18 @@ position: relative;
   input,
   select {
     font: inherit;
+    
   }
 
   .etude-wrap {
-    width: min(1120px, 100%);
-   // margin-inline: auto;
-   //padding-inline: 20px;
+    width: min(1120px, 90%);
+   margin-inline: auto;
+   padding-inline: 20px;
     position: absolute;
     top: 55%;
     left: 5%;
     transform: translateY(-50%);
+    
   }
 
   .etude-hero {
@@ -50,7 +54,7 @@ position: relative;
       url("https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1800&q=85") center / cover;
 
     h1 {
-      max-width: 750px;
+      max-width: 90%;
       //margin: 50px 0 12px;
       margin-bottom: 20px;
       font-size: clamp(36px, 5vw, 56px);
@@ -58,9 +62,10 @@ position: relative;
     }
 
     p {
-      max-width: 640px;
+      max-width: 90%;
       color: #f4ede4;
       margin-bottom: 15px;
+      background-color: red;
     }
 
     .etude-eyebrow {
@@ -392,6 +397,31 @@ position: relative;
         padding: 12px 13px;
       }
     }
+  }
+  @media screen and (max-width:320px) {
+    .etude-hero {
+   
+ 
+
+    h1 {
+      max-width: 90%;
+      //margin: 50px 0 12px;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+
+    }
+
+    p {
+      max-width: 90%;
+      color: #f4ede4;
+      margin-bottom: 15px;
+     
+    }
+
+    .etude-eyebrow {
+      color: #e1bd79;
+    }
+  }
   }
 
   @media print {
