@@ -125,18 +125,7 @@ export default function ContactSection() {
           </div>
 
           <form onSubmit={handleSubmit} className="formGrid">
-            <div className="fieldGroup">
-              <label htmlFor="name">Nom</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Ex: Dupont"
-                value={formData.name}
-                onChange={handleChange}
-                required
-              />
-            </div>
+            
 
             <div className="fieldGroup">
               <label htmlFor="surname">Prénom</label>
@@ -146,6 +135,18 @@ export default function ContactSection() {
                 name="surname"
                 placeholder="Ex: Jean"
                 value={formData.surname}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="fieldGroup">
+              <label htmlFor="name">Nom</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Ex: Dupont"
+                value={formData.name}
                 onChange={handleChange}
                 required
               />

@@ -119,8 +119,8 @@ router.post("/contact", verifyTurnstile, async (req, res) => {
     const mail = {
       from: process.env.EMAIL,
       replyTo: email,
-      to: "scottreeves250@gmail.com",
-      subject: `Email du site de la part de $ ${surname} {name}`,
+      to: "m.diaby@goldnpatrimoine.com",
+      subject: `Email du site de la part de $ ${surname} ${name}`,
       html: `
         <div style="font-family: sans-serif; color: #333;"> 
           <h1 style="color: #ca9e57;">Informations sur le client</h1>
