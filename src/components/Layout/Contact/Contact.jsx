@@ -259,9 +259,15 @@ export default function ContactSection() {
               <Turnstile
               ref={turnstileRef}
     siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-    onSuccess={setToken}
+    onSuccess={(token) => {
+  console.log("Turnstile : vérification réussie");
+  setToken(token);
+}}
     onExpire={() => setToken("")}
-    onError={() => setToken("")}
+  onError={(error) => {
+  console.error("Erreur Turnstile :", error);
+  setToken("");
+}}
     options={{
       appearance: "interaction-only"
     }}
