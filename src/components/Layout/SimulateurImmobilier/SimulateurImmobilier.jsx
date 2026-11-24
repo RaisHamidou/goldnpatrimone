@@ -1,9 +1,8 @@
 "use client";
-
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import "./SimulateurImmobilier.scss";
 import LogoSim from "../../../assets/logo/logo-n.png";
-
 const INITIAL = {
   income: 4000, debts: 0, effort: 35, deposit: 15000, term: "25", rate: 3.5, insurance: 0.3,
   zone: "A", people: "2", rfr: 45000, ptzPrice: 250000, homeType: "apt", firstBuyer: "yes", otherLoans: 200000,
@@ -12,7 +11,6 @@ const INITIAL = {
   clientName: "", clientSurname:"", clientEmail: "", clientPhone: "", LivingCity:"", city: "",
   projectType: "Résidence principale", contactConsent: "no",
 };
-
 const ZONES = {
   A: {
     income: [49000, 73500, 88200, 102900, 117600, 132300, 147000, 161700],
@@ -35,7 +33,6 @@ const ZONES = {
     tr: [15000, 19500, 24000, 28500],
   },
 };
-
 const COEFF = [1, 1.5, 1.8, 2.1, 2.4, 2.7, 3, 3.3];
 const APT_SHARES = [0.5, 0.4, 0.4, 0.2];
 const HOUSE_SHARES = [0.3, 0.2, 0.2, 0.1];
@@ -45,7 +42,6 @@ const DEFERRALS = [
   "2 ans de différé, puis 13 ans de remboursement",
   "Pas de différé ; remboursement sur 10 ans",
 ];
-
 const euro = (value) =>
   Number.isFinite(value)
     ? new Intl.NumberFormat("fr-FR", {
@@ -54,14 +50,11 @@ const euro = (value) =>
         maximumFractionDigits: 0,
       }).format(Math.max(0, value))
     : "—";
-
 const percent = (value) =>
   Number.isFinite(value)
     ? `${value.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`
     : "—";
-
 const nonNegative = (value) => Math.max(0, Number(value) || 0);
-
 function paymentFactor(annualRate, years) {
   const monthlyRate = annualRate / 1200;
   const count = years * 12;
@@ -69,12 +62,10 @@ function paymentFactor(annualRate, years) {
     ? 1 / count
     : monthlyRate / (1 - Math.pow(1 + monthlyRate, -count));
 }
-
 function loanFromPayment(monthly, annualRate, years, insuranceRate) {
   const factor = paymentFactor(annualRate, years) + insuranceRate / 1200;
   return factor > 0 ? Math.max(0, monthly) / factor : 0;
 }
-
 function Field({ label, name, value, onChange, type = "number", options, hint, ...props }) {
   return (
     <div className="sim-field">
@@ -87,12 +78,12 @@ function Field({ label, name, value, onChange, type = "number", options, hint, .
         </select>
       ) : (
         <input
-          id={`sim-${name}`}
-          name={name}
-          type={type}
-          value={value}
-          onChange={onChange}
-          required
+id={`sim-${name}`}
+name={name}
+type={type}
+value={value}
+onChange={onChange}
+required
           {...(type === "number" ? { min: 0 } : {})}
           {...props}
         />
@@ -101,11 +92,9 @@ function Field({ label, name, value, onChange, type = "number", options, hint, .
     </div>
   );
 }
-
 function Subhead({ children }) {
   return <div className="sim-subhead">{children}</div>;
 }
-
 function Metric({ label, value, primary = false }) {
   return (
     <div className={`sim-metric${primary ? " sim-metric--primary" : ""}`}>
@@ -114,7 +103,6 @@ function Metric({ label, value, primary = false }) {
     </div>
   );
 }
-
 function SectionHead({ title, description, tag }) {
   return (
     <div className="sim-section-head">
@@ -126,34 +114,34 @@ function SectionHead({ title, description, tag }) {
     </div>
   );
 }
-
 export default function SimulateurImmobilier() {
   const [values, setValues] = useState({ ...INITIAL });
   let index = 0
   const [activeTab, setActiveTab] = useState(index);
-  
   const [contactError, setContactError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [contactStatus, setContactStatus] = useState({ type: null, text: "" });
+  const [token, setToken] = useState("");
+  const turnstileRef = useRef(null);
 
+  useEffect(() => {
+    if (activeTab !== 3) setToken("");
+  }, [activeTab]);
+  const [contactStatus, setContactStatus] = useState({ type: null, text: "" });
   const next = ()=>{
    setActiveTab(current => Math.min(current + 1, tabs.length -1))
   }
   const prev = ()=>{
     setActiveTab(current => Math.max(current -1, 0))
   }
-
   const setField = (event) => {
     const { name, value } = event.target;
     setValues((current) => ({ ...current, [name]: value }));
     if (name === "clientName" || name === "clientEmail") setContactError("");
   };
-
   const calculations = useMemo(() => {
     const v = values;
     const n = (key) => nonNegative(v[key]);
-
-    // Capacité d'emprunt
+// Capacité d'emprunt
     const income = n("income");
     const debts = n("debts");
     const effort = Math.min(50, Math.max(1, Number(v.effort) || 35)) / 100;
@@ -165,8 +153,7 @@ export default function SimulateurImmobilier() {
     const capacityBudget = loan + n("deposit");
     const ratio = income ? ((debts + available) / income) * 100 : 0;
     const capacity = { income, debts, available, loan, term, rate, insurance, budget: capacityBudget, ratio };
-
-    // Estimation indicative du PTZ (barèmes simplifiés fournis)
+// Estimation indicative du PTZ (barèmes simplifiés fournis)
     const zone = v.zone;
     const people = Math.min(8, Math.max(1, Number(v.people) || 1));
     const index = people - 1;
@@ -191,14 +178,12 @@ export default function SimulateurImmobilier() {
     const eligible = eligibleIncome && firstBuyer !== "no" && firstBuyer !== "exception" && tranche <= 4 && cost > 0;
     let ptzAmount = eligible ? Math.min(cost, operationCap) * share : 0;
     if (otherLoans > 0) ptzAmount = Math.min(ptzAmount, otherLoans);
-
     const reasons = [];
     if (!eligibleIncome) reasons.push("Le RFR dépasse le plafond de ressources affiché pour la zone et la taille du foyer.");
     if (firstBuyer === "no") reasons.push("La condition de primo-accession n’est pas remplie, sauf exception applicable.");
     if (firstBuyer === "exception") reasons.push("L’exception à la condition de primo-accession doit être validée.");
     if (tranche > 4) reasons.push("Le quotient de ressources se situe au-delà de la tranche 4.");
     if (!cost) reasons.push("Saisissez le coût de l’opération.");
-
     const ptz = {
       eligible,
       amount: ptzAmount,
@@ -212,8 +197,7 @@ export default function SimulateurImmobilier() {
         ? `Calcul simplifié fondé sur les plafonds de ressources, le quotient familial, le plafond d’opération et la quotité indicative. Le montant réel et le différé doivent être confirmés par un établissement prêteur. ${otherLoans > 0 ? "Le montant est plafonné par les autres prêts renseignés." : "Renseignez les autres prêts éligibles pour vérifier le plafond légal."}`
         : `${reasons.join(" ")} Le résultat n’est pas une décision officielle.`,
     };
-
-    // Budget d'acquisition
+// Budget d'acquisition
     const price = n("targetPrice");
     const deposit = n("cash");
     const ptzManual = n("ptzManual");
@@ -233,7 +217,6 @@ export default function SimulateurImmobilier() {
       price, deposit, ptzAmt: ptzManual, notary, guarantee, other, total, need, monthly, maxMonth,
       note: `Mensualité indicative sur le financement restant, assurance estimée comprise. ${monthly > maxMonth ? "Attention : cette mensualité dépasse le repère de 35 % après prise en compte des crédits renseignés." : "Mensualité comparée à un taux d’effort indicatif de 35 % (hors autres charges du foyer)."}`,
     };
-
     return {
       capacity,
       ptz,
@@ -246,9 +229,7 @@ export default function SimulateurImmobilier() {
       },
     };
   }, [values]);
-
   const { capacity, ptz, budget, summary } = calculations;
-
   const handlePrint = async () => {
     const fields = document.querySelectorAll(".sim-contact-grid input, .sim-contact-grid select");
     for (const field of fields) {
@@ -257,33 +238,33 @@ export default function SimulateurImmobilier() {
         return;
       }
     }
-
-    // Envoie d'abord la demande par e-mail ; imprime uniquement si l'envoi réussit.
+// Envoie d'abord la demande par e-mail ; imprime uniquement si l'envoi réussit.
     const sent = await prepareEmail();
     if (sent) window.print();
   };
-
   const reset = () => {
+   setToken("");
+   turnstileRef.current?.reset();
     setValues({ ...INITIAL });
     setContactError("");
     setContactStatus({ type: null, text: "" });
     setLoading(false);
   };
-
   const prepareEmail = async () => {
     setContactError("");
     setContactStatus({ type: null, text: "" });
-
     const name = values.clientName.trim();
     const surname = values.clientSurname.trim();
     const email = values.clientEmail.trim();
-
     if (!name || !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setContactError("Veuillez renseigner votre nom et une adresse e-mail valide.");
       return false;
     }
     if (loading) return false;
-
+    if (!token) {
+      setContactError("Veuillez patienter pendant la vérification de sécurité.");
+      return false;
+    }
     setLoading(true);
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4050";
@@ -293,9 +274,9 @@ export default function SimulateurImmobilier() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            turnstileToken: token,
             name,
             surname,
-
             email,
             tel: values.clientPhone.trim(),
             city: values.city.trim(),
@@ -309,12 +290,10 @@ export default function SimulateurImmobilier() {
           }),
         }
       );
-
       const data = await response.json().catch(() => ({}));
       if (!response.ok || data.status !== "Message Sent") {
         throw new Error(data.message || "Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
       }
-
       setContactStatus({
         type: "success",
         text: "Votre demande a été envoyée avec succès. Merci pour votre confiance.",
@@ -331,40 +310,40 @@ export default function SimulateurImmobilier() {
       return false;
     } finally {
       setLoading(false);
+      setToken("");
+      turnstileRef.current?.reset();
     }
   };
-
   const tabs = [
     { id: 0, label: "1. Capacité" },
     { id: 1, label: "2. PTZ" },
     { id: 2, label: "3. Budget & frais" },
     { id: 3, label: "4. Synthèse" },
   ];
-
   return (
     <div className="sim-wrap">
       <div className="sim-app">
         <nav className="sim-tabs" aria-label="Modules de simulation">
           {tabs.map((tab) => (
             <button
-              className="sim-tab"
-              key={tab.id}
-              type="button"
-              aria-selected={activeTab === tab.id}
-              onClick={() => setActiveTab(tab.id)}
+className="sim-tab"
+key={tab.id}
+type="button"
+aria-selected={activeTab === tab.id}
+onClick={() => { if (tab.id !== activeTab) setToken(""); setActiveTab(tab.id); }}
+                disabled={loading}
             >
               {tab.label}
             </button>
           ))}
         </nav>
-
         <main className="sim-main">
           {activeTab === 0 && (
             <section className="sim-panel">
               <SectionHead
-                title="Votre capacité d’emprunt"
-                description="Indiquez les revenus du foyer et les paramètres envisagés pour estimer un financement bancaire."
-                tag="Estimation indicative"
+title="Votre capacité d’emprunt"
+description="Indiquez les revenus du foyer et les paramètres envisagés pour estimer un financement bancaire."
+tag="Estimation indicative"
               />
               <div className="sim-grid">
                 <Subhead>Votre situation financière</Subhead>
@@ -387,13 +366,12 @@ export default function SimulateurImmobilier() {
               </div>
             </section>
           )}
-
           {activeTab === 1 && (
             <section className="sim-panel">
               <SectionHead
-                title="Estimation du prêt à taux zéro (PTZ)"
-                description="Pour un achat destiné à devenir votre résidence principale. Les paramètres réglementaires et le zonage doivent être confirmés."
-                tag="Barèmes indicatifs 2025–2027"
+title="Estimation du prêt à taux zéro (PTZ)"
+description="Pour un achat destiné à devenir votre résidence principale. Les paramètres réglementaires et le zonage doivent être confirmés."
+tag="Barèmes indicatifs 2025–2027"
               />
               <div className="sim-grid">
                 <Subhead>Le logement et le foyer</Subhead>
@@ -427,13 +405,12 @@ export default function SimulateurImmobilier() {
               </div>
             </section>
           )}
-
           {activeTab === 2 && (
             <section className="sim-panel">
               <SectionHead
-                title="Budget d’acquisition et frais"
-                description="Évaluez le prix de logement compatible avec vos paramètres, puis ajustez les frais liés à votre programme."
-                tag="Personnalisable"
+title="Budget d’acquisition et frais"
+description="Évaluez le prix de logement compatible avec vos paramètres, puis ajustez les frais liés à votre programme."
+tag="Personnalisable"
               />
               <div className="sim-grid">
                 <Subhead>Hypothèses d’achat</Subhead>
@@ -460,13 +437,12 @@ export default function SimulateurImmobilier() {
               </div>
             </section>
           )}
-
           {activeTab === 3 && (
             <section className="sim-panel">
               <SectionHead
-                title="La synthèse de votre projet"
-                description="Récapitulatif des hypothèses saisies et des estimations. Vous pouvez imprimer cette page ou demander un accompagnement."
-                tag="Préparation de rendez-vous"
+title="La synthèse de votre projet"
+description="Récapitulatif des hypothèses saisies et des estimations. Vous pouvez imprimer cette page ou demander un accompagnement."
+tag="Préparation de rendez-vous"
               />
               <div className="sim-results">
                 <div className="sim-result-grid">
@@ -480,55 +456,57 @@ export default function SimulateurImmobilier() {
                   <strong>{euro(budget.notary + budget.guarantee + budget.other)}</strong>. Résultats indicatifs uniquement ; voir les avertissements ci-dessous.
                 </p>
               </div>
-
               <div className="sim-grid sim-contact-grid">
                 <Field label="Prénom" name="clientName" type="text" value={values.clientName} onChange={setField} autoComplete="name" placeholder="Votre Prénom" maxLength={150} />
                 <Field label="Nom" name="clientSurname" type="text" value={values.clientSurname} onChange={setField} autoComplete="name" placeholder="Votre nom" maxLength={150} />
                 <Field label="E-mail" name="clientEmail" type="email" value={values.clientEmail} onChange={setField} autoComplete="email" placeholder="vous@exemple.fr" maxLength={254} />
                 <Field label="Téléphone" name="clientPhone" type="tel" value={values.clientPhone} onChange={setField} autoComplete="tel" placeholder="06 00 00 00 00" maxLength={40} />
-                <Field label="Ville de résidence." name="LivingCity" type="text" value={values.Livingcity} onChange={setField} placeholder="Ex. Chessy, Noisiel…" maxLength={150} />
+                <Field label="Ville de résidence." name="LivingCity" type="text" value={values.LivingCity} onChange={setField} placeholder="Ex. Chessy, Noisiel…" maxLength={150} />
                 <Field label="Ville ou secteur recherché" name="city" type="text" value={values.city} onChange={setField} placeholder="Ex. Chessy, Noisiel…" maxLength={150} />
                 <Field
-                  label="Votre projet"
-                  name="projectType"
-                  value={values.projectType}
-                  onChange={setField}
-                  options={[
+label="Votre projet"
+name="projectType"
+value={values.projectType}
+onChange={setField}
+options={[
                     { value: "Résidence principale", label: "Résidence principale" },
                     { value: "Investissement locatif", label: "Investissement locatif" },
                     { value: "Je me renseigne", label: "Je me renseigne" },
                   ]}
                 />
               </div>
-
+              <Turnstile
+                ref={turnstileRef}
+                siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                onSuccess={setToken}
+                onExpire={() => setToken("")}
+                onError={() => setToken("")}
+                options={{ appearance: "interaction-only" }}
+              />
               <div className="sim-actions">
-                <button className="sim-btn" type="button" onClick={prepareEmail} disabled={loading}>
+                <button className="sim-btn" type="button" onClick={prepareEmail} disabled={loading || !token}>
                   {loading ? "Envoi en cours..." : "Envoyer ma demande"}
                 </button>
-                <button className="sim-btn sim-btn--secondary" type="button" onClick={handlePrint} disabled={loading}>
+                <button className="sim-btn sim-btn--secondary" type="button" onClick={handlePrint} disabled={loading || !token}>
                   {loading ? "Envoi en cours..." : "Imprimer / enregistrer en PDF"}
                 </button>
               </div>
-
               {contactError && <p className="sim-error" role="alert">{contactError}</p>}
-
               {contactStatus.type && (
                 <p
-                  className={contactStatus.type === "success" ? "sim-note" : "sim-error"}
-                  role={contactStatus.type === "error" ? "alert" : "status"}
-                  aria-live="polite"
+className={contactStatus.type === "success" ? "sim-note" : "sim-error"}
+role={contactStatus.type === "error" ? "alert" : "status"}
+aria-live="polite"
                 >
                   {contactStatus.text}
                 </p>
               )}
-
               <p className="sim-note">
                 Votre demande et les estimations saisies seront transmises à GOLD’N PATRIMOINE afin de permettre le suivi de votre projet.
                 Les résultats restent indicatifs et ne constituent pas une offre de prêt.
               </p>
             </section>
           )}
-
           <div className="sim-actions sim-global-actions">
           <a className="sim-btn" href="https://goldnpatrimoine.netlify.app/" target="_blank" rel="noopener noreferrer">
               Contacter Gold’n Patrimoine
@@ -536,16 +514,14 @@ export default function SimulateurImmobilier() {
             <button className="sim-btn sim-btn--secondary" type="button" onClick={reset} disabled={loading}>
               Réinitialiser les valeurs
             </button>
-            
             <button className="sim-btn sim-btn--secondary" type="button"  onClick={prev} disabled={loading || activeTab === 0}>
   Précédent
 </button>
-            <button className="sim-btn sim-btn--secondary" type="button" onClick={()=> next()} disabled={loading || activeTab === activeTab.length -1}>
+            <button className="sim-btn sim-btn--secondary" type="button" onClick={()=> next()} disabled={loading || activeTab === tabs.length - 1}>
               Suivant
             </button>
           </div>
         </main>
-
         <footer className="sim-footer">
           <div className="sim-footer-row">
             <div className="sim-sign">
@@ -558,7 +534,6 @@ export default function SimulateurImmobilier() {
             <span>Simulation gratuite · Résultats indicatifs</span>
           </div>
         </footer>
-
         <div className="sim-fineprint">
           Important : cet outil est informatif et non contractuel. Il ne constitue pas une offre de prêt, un conseil financier personnalisé ou une décision officielle d’éligibilité au PTZ. Le calcul réel dépend de la commune exacte, des ressources retenues, de la nature du projet, des plafonds réglementaires, du calendrier de remboursement, de l’assurance, des frais et de l’analyse de la banque. Les frais d’acte et les conditions fiscales sont à vérifier pour chaque opération. Les données de contact sont transmises uniquement lors de l’envoi volontaire de la demande.
         </div>

@@ -5,7 +5,83 @@ dotenv.config();
 const router = express.Router();
 
 
+const verifyTurnstile = async (req, res, next) => {
+  const token = req.body?.turnstileToken;
+  const secretKey = process.env.TURNSTILE_SECRET_KEY;
 
+  if (!secretKey) {
+    console.error("Clé secrète Turnstile manquante.");
+
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Le service de vérification est indisponible.",
+    });
+  }
+
+  if (typeof token !== "string" || !token || token.length > 2048) {
+    return res.status(400).json({
+      status: "ERROR",
+      message: "Vérification de sécurité manquante ou invalide.",
+    });
+  }
+
+  try {
+    const response = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          secret: secretKey,
+          response: token,
+        }),
+        signal: AbortSignal.timeout(10000),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Service Cloudflare indisponible.");
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      return res.status(403).json({
+        status: "ERROR",
+        message: "La vérification de sécurité a échoué. Veuillez réessayer.",
+      });
+    }
+
+    const allowedHostnames = [
+      "goldnpatrimoine.com",
+      "www.goldnpatrimoine.com",
+      "goldnpatrimoine.netlify.app",
+    ];
+
+    if (process.env.NODE_ENV !== "production") {
+      allowedHostnames.push("localhost", "127.0.0.1");
+    }
+
+    if (!allowedHostnames.includes(data.hostname)) {
+      return res.status(403).json({
+        status: "ERROR",
+        message: "Origine de la vérification non autorisée.",
+      });
+    }
+
+    next();
+
+  } catch (error) {
+    console.error("Erreur Turnstile :", error.message);
+
+    return res.status(503).json({
+      status: "ERROR",
+      message: "Impossible de vérifier la sécurité. Veuillez réessayer.",
+    });
+  }
+};
 // On garde le nom cohérent : "EmailContact" ou changez tout en "contactEmail"
 const EmailContact = nodemailer.createTransport({
   service: "gmail",
@@ -25,7 +101,7 @@ EmailContact.verify((error) => {
     }
 });
 
-router.post("/contact", async (req, res) => {
+router.post("/contact", verifyTurnstile, async (req, res) => {
   try {
     const { 
       name, 
@@ -43,7 +119,7 @@ router.post("/contact", async (req, res) => {
     const mail = {
       from: process.env.EMAIL,
       replyTo: email,
-      to: "m.diaby@goldnpatrimoine.com",
+      to: "scottreeves250@gmail.com",
       subject: `Email du site de la part de $ ${surname} {name}`,
       html: `
         <div style="font-family: sans-serif; color: #333;"> 
@@ -94,7 +170,7 @@ function formatEuro(value) {
   }).format(amount);
 }
 
-router.post("/simulateur-immobilier", async (req, res) => {
+router.post("/simulateur-immobilier", verifyTurnstile, async (req, res) => {
   try {
     const {
       name,
@@ -291,7 +367,7 @@ const formatEuroEtude = (value) =>
     maximumFractionDigits: 0,
   }).format(Number(value) || 0);
 
-router.post("/investissement-locatif", async (req, res) => {
+router.post("/investissement-locatif",verifyTurnstile, async (req, res) => {
   try {
     const {
       name,

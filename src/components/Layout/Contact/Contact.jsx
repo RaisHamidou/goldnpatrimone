@@ -1,17 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
-import { 
-  FiMail, 
-  FiPhone, 
-  FiSend, 
-  FiMapPin, 
-  FiHome, 
-  FiCheckCircle, 
-  FiAlertCircle, 
-  FiLoader 
-} from "react-icons/fi";
-//import styles from "./Contact.scss";
+import React, { useState,useRef } from "react";
+import { FiMail, FiPhone, FiSend, FiMapPin, FiHome, FiCheckCircle, FiAlertCircle, FiLoader } from "react-icons/fi";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -19,7 +10,7 @@ export default function ContactSection() {
     surname: "",
     email: "",
     tel: "",
-    postalCode: "", // Nouveau champ ajouté
+    postalCode: "", 
     cityOfResidence: "",
     cityOfSearch: "",
     number0fPieces: "",
@@ -29,6 +20,10 @@ export default function ContactSection() {
 
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: null, text: "" });
+  const [token, setToken] = useState("");
+  const turnstileRef = useRef(null);
+
+ 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +32,14 @@ export default function ContactSection() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!token) {
+    setStatus({
+      type: "error",
+      text: "Veuillez patienter pendant la vérification."
+    });
+    return;
+  }
+
     setLoading(true);
     setStatus({ type: null, text: "" });
 
@@ -47,7 +50,13 @@ export default function ContactSection() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(
+          {
+            ...formData,
+          turnstileToken: token
+          }
+        ),
+        
       });
 
       const data = await response.json();
@@ -82,6 +91,8 @@ export default function ContactSection() {
         text: "Impossible de contacter le serveur.",
       });
     } finally {
+      setToken("");
+  turnstileRef.current?.reset();
       setLoading(false);
     }
   };
@@ -245,10 +256,20 @@ export default function ContactSection() {
             </div>
 
             <div className="fullWidth">
+              <Turnstile
+              ref={turnstileRef}
+    siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+    onSuccess={setToken}
+    onExpire={() => setToken("")}
+    onError={() => setToken("")}
+    options={{
+      appearance: "interaction-only"
+    }}
+  />
               <button
                 type="submit"
                 className="submitBtn"
-                disabled={loading}
+                disabled={loading || !token}
               >
                 {loading ? (
                   <>
